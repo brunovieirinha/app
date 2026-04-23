@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Plano de Tratamento — Salomé</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f7f5f2;
+    --surface: #ffffff;
+    --border: #e8e4de;
+    --border2: #d0cbc4;
+    --text: #1c1c1e;
+    --muted: #6b6b6b;
+    --hint: #9a9a9a;
+    --success-bg: #eaf6ef;
+    --success-border: #a3d9b8;
+    --success-text: #1a6b3a;
+    --warning-bg: #fff8ec;
+    --warning-border: #f5d08a;
+    --warning-text: #7a4f00;
+    --danger-bg: #fef2f2;
+    --danger-border: #fca5a5;
+    --danger-text: #991b1b;
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 20px 16px 60px;
+    max-width: 680px;
+    margin: 0 auto;
+  }
+  h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem;
+    color: var(--text);
+    margin-bottom: 3px;
+  }
+  .sub { font-size: 13px; color: var(--muted); margin-bottom: 18px; }
+
+  /* Status */
+  .status-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    margin-bottom: 16px;
+    font-size: 12px; color: var(--muted);
+  }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: #2d9e5f; flex-shrink:0; }
+  .status-dot.err { background: #dc2626; }
+
+  /* Progress */
+  .progress-row { display:flex; align-items:center; gap:12px; margin-bottom:18px; }
+  .progress-track { flex:1; height:6px; background:#e8e4de; border-radius:99px; overflow:hidden; }
+  .progress-fill { height:100%; background:#2d9e5f; border-radius:99px; transition:width 0.4s; }
+  .progress-txt { font-size:12px; color:var(--muted); white-space:nowrap; }
+
+  /* Section title */
+  .section-title { font-size:15px; font-weight:600; color:var(--text); margin:20px 0 10px; }
+
+  /* Med card */
+  .med-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .med-hdr {
+    display:flex; align-items:center; gap:10px;
+    padding:11px 14px;
+    border-bottom: 1px solid var(--border);
+  }
+  .med-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+  .med-name { font-size:14px; font-weight:600; flex:1; color:var(--text); }
+  .med-badge { font-size:11px; font-weight:500; padding:2px 9px; border-radius:99px; }
+  .med-info-row {
+    display:flex; gap:14px; padding:7px 14px;
+    border-bottom:1px solid var(--border); flex-wrap:wrap;
+  }
+  .med-info-row span { font-size:12px; color:var(--muted); }
+  .crisis-box {
+    margin:8px 14px;
+    padding:8px 10px;
+    background:var(--warning-bg);
+    border:1px solid var(--warning-border);
+    border-radius:var(--radius-sm);
+    font-size:12px; color:var(--warning-text); line-height:1.5;
+  }
+  .doses-section { padding:10px 14px 14px; }
+  .doses-lbl {
+    font-size:11px; color:var(--hint);
+    text-transform:uppercase; letter-spacing:0.6px; margin-bottom:8px;
+  }
+  .doses-grid { display:flex; flex-wrap:wrap; gap:6px; }
+  .dose-pill {
+    display:flex; flex-direction:column; align-items:center; gap:2px;
+    padding:7px 10px;
+    border-radius:var(--radius-sm);
+    border:1px solid var(--border);
+    cursor:pointer; min-width:62px;
+    background:#faf9f7;
+    transition:background 0.15s, border-color 0.15s;
+    user-select:none;
+  }
+  .dose-pill:hover { border-color:var(--border2); background:#f0ede8; }
+  .dose-pill.taken { background:var(--success-bg); border-color:var(--success-border); }
+  .dose-pill .d-check { font-size:12px; color:var(--success-text); opacity:0; line-height:1; }
+  .dose-pill.taken .d-check { opacity:1; }
+  .dose-pill .d-time { font-size:13px; font-weight:600; color:var(--text); }
+  .dose-pill.taken .d-time { color:var(--success-text); }
+  .dose-pill .d-day { font-size:11px; color:var(--hint); }
+  .dose-pill.taken .d-day { color:var(--success-text); }
+  .dose-pill .d-who { font-size:10px; color:var(--success-text); max-width:58px; text-align:center; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+
+  /* Fever card */
+  .fever-card {
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    margin-bottom:10px; overflow:hidden;
+  }
+  .fever-hdr {
+    display:flex; align-items:center; gap:10px;
+    padding:11px 14px; border-bottom:1px solid var(--border);
+  }
+  .fever-body { padding:12px 14px; }
+  .fever-alert {
+    padding:8px 10px; margin-bottom:10px;
+    background:var(--danger-bg); border:1px solid var(--danger-border);
+    border-radius:var(--radius-sm);
+    font-size:12px; color:var(--danger-text); line-height:1.5; display:none;
+  }
+  .fever-alert.warn { background:var(--warning-bg); border-color:var(--warning-border); color:var(--warning-text); }
+  .fever-input-row {
+    display:flex; align-items:center; gap:8px;
+    margin-bottom:12px; flex-wrap:wrap;
+  }
+  .fever-input-row label { font-size:13px; color:var(--muted); }
+  .fever-input-row input[type=number] {
+    width:85px; font-size:14px; font-family:'DM Sans',sans-serif;
+    padding:6px 8px; border-radius:var(--radius-sm);
+    border:1px solid var(--border2);
+    background:var(--surface); color:var(--text); text-align:center;
+  }
+  .fever-input-row input[type=text] {
+    width:130px; font-size:13px; font-family:'DM Sans',sans-serif;
+    padding:6px 8px; border-radius:var(--radius-sm);
+    border:1px solid var(--border2);
+    background:var(--surface); color:var(--text);
+  }
+  .btn {
+    font-size:13px; font-family:'DM Sans',sans-serif; font-weight:500;
+    padding:6px 14px; border-radius:var(--radius-sm);
+    cursor:pointer; border:1px solid var(--border2);
+    background:var(--surface); color:var(--text);
+    transition:background 0.15s;
+  }
+  .btn:hover { background:#f0ede8; }
+  .btn-warn {
+    border-color:var(--warning-border);
+    background:var(--warning-bg); color:var(--warning-text);
+  }
+  .btn-warn:hover { background:#fef0d0; }
+  .fever-row {
+    display:flex; align-items:center; gap:10px;
+    padding:6px 0; border-bottom:1px solid var(--border);
+    font-size:13px;
+  }
+  .fever-row:last-child { border-bottom:none; }
+  .fever-temp { font-weight:600; min-width:54px; }
+  .fever-temp.high { color:#dc2626; }
+  .fever-temp.mid { color:#d97706; }
+  .fever-temp.ok { color:#2d9e5f; }
+  .fever-meta { color:var(--muted); font-size:12px; flex:1; }
+  .del-btn {
+    font-size:11px; color:var(--hint); cursor:pointer;
+    padding:2px 7px; border-radius:4px;
+    border:1px solid var(--border);
+    background:none; font-family:'DM Sans',sans-serif;
+    transition:color 0.15s, border-color 0.15s;
+  }
+  .del-btn:hover { color:#dc2626; border-color:#fca5a5; }
+
+  /* Paracetamol */
+  .para-card {
+    background:var(--surface);
+    border:2px solid var(--warning-border);
+    border-radius:var(--radius);
+    margin-bottom:10px; overflow:hidden;
+  }
+  .para-hdr {
+    display:flex; align-items:center; gap:10px;
+    padding:11px 14px;
+    background:var(--warning-bg);
+    border-bottom:1px solid var(--warning-border);
+  }
+  .para-note {
+    padding:7px 14px; font-size:12px;
+    color:var(--warning-text);
+    border-bottom:1px solid var(--border);
+    background:#fffdf5;
+  }
+  .para-body { padding:10px 14px 14px; }
+  .para-pill {
+    display:inline-flex; flex-direction:column; align-items:center; gap:2px;
+    padding:7px 12px; border-radius:var(--radius-sm);
+    border:1px solid var(--warning-border);
+    background:var(--warning-bg);
+    margin:0 5px 5px 0;
+    min-width:68px;
+  }
+  .para-pill .p-check { font-size:12px; color:var(--warning-text); line-height:1; }
+  .para-pill .p-time { font-size:13px; font-weight:600; color:var(--warning-text); }
+  .para-pill .p-day { font-size:11px; color:#a07030; }
+  .para-pill .p-temp { font-size:10px; color:var(--warning-text); }
+  .para-add-row { display:flex; gap:8px; align-items:center; margin-top:8px; flex-wrap:wrap; }
+  .para-next { font-size:11px; color:var(--hint); }
+
+  /* Log */
+  .log-card {
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:var(--radius); overflow:hidden; margin-top:20px;
+  }
+  .log-hdr { padding:11px 14px; border-bottom:1px solid var(--border); font-size:14px; font-weight:600; }
+  .log-body { padding:4px 14px 10px; }
+  .log-empty { font-size:13px; color:var(--muted); padding:10px 0; }
+  .log-item { display:flex; align-items:flex-start; gap:10px; padding:7px 0; border-bottom:1px solid var(--border); }
+  .log-item:last-child { border-bottom:none; }
+  .log-dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; margin-top:4px; }
+  .log-dot.green { background:#2d9e5f; }
+  .log-dot.orange { background:#d97706; }
+  .log-dot.red { background:#dc2626; }
+  .log-dot.grey { background:#9a9a9a; }
+  .log-txt { font-size:13px; color:var(--text); line-height:1.4; }
+  .log-ts { font-size:11px; color:var(--hint); }
+
+  .empty-history { font-size:13px; color:var(--muted); padding:4px 0 8px; }
+</style>
+</head>
+<body>
+
+<h1>Plano de Tratamento — Salomé</h1>
+<p class="sub">Iniciado a 23 de abril de 2026 · 10h00</p>
+
+<div class="status-bar">
+  <div class="status-dot" id="statusDot"></div>
+  <span id="statusTxt">A carregar...</span>
+</div>
+
+<div class="progress-row">
+  <div class="progress-track"><div class="progress-fill" id="progFill" style="width:0%"></div></div>
+  <span class="progress-txt" id="progTxt">...</span>
+</div>
+
+<div class="section-title">Medicação prescrita</div>
+<div id="cards"></div>
+
+<div class="section-title">Registo de febre</div>
+<div class="fever-card">
+  <div class="fever-hdr">
+    <div class="med-dot" style="background:#dc2626"></div>
+    <div class="med-name">Temperatura corporal</div>
+    <span class="med-badge" style="background:#fef2f2;color:#991b1b">Registo manual</span>
+  </div>
+  <div class="fever-body">
+    <div id="feverAlert" class="fever-alert"></div>
+    <div class="fever-input-row">
+      <label>Temperatura (°C):</label>
+      <input type="number" id="feverTemp" min="35" max="42" step="0.1" placeholder="37.0" />
+      <label>Nota:</label>
+      <input type="text" id="feverNote" placeholder="ex: após banho" maxlength="30" />
+      <button class="btn" onclick="addFever()">Registar</button>
+    </div>
+    <div id="feverHistory"><div class="empty-history">Nenhum registo ainda.</div></div>
+  </div>
+</div>
+
+<div class="section-title">Paracetamol — SOS (febre)</div>
+<div class="para-card">
+  <div class="para-hdr">
+    <div class="med-dot" style="background:#d97706"></div>
+    <div class="med-name">Paracetamol 500 mg</div>
+    <span class="med-badge" style="background:#fef3c7;color:#92400e">SOS febre</span>
+  </div>
+  <div class="para-note">Apenas se temperatura ≥ 38°C · Máximo 4 tomas/dia · Intervalo mínimo de 6 horas</div>
+  <div class="para-body">
+    <div id="paraDoses"><div class="empty-history">Nenhuma toma registada.</div></div>
+    <div class="para-add-row">
+      <button class="btn btn-warn" onclick="addPara()">+ Registar toma agora</button>
+      <span class="para-next" id="paraNext"></span>
+    </div>
+  </div>
+</div>
+
+<div class="log-card">
+  <div class="log-hdr">Registo de atividade</div>
+  <div class="log-body" id="logList"><div class="log-empty">Nenhuma atividade ainda.</div></div>
+</div>
+
+<script>
+const NOME = 'Salomé';
+const LS_KEY = 'salome_tratamento_v4';
+const START = new Date('2026-04-23T10:00:00');
+
+function genDoses(intervalH, days) {
+  const d = [];
+  for (let i = 0; i < days * (24 / intervalH); i++)
+    d.push({ id: i, time: new Date(START.getTime() + i * intervalH * 3600000) });
+  return d;
+}
+function genSalb() {
+  const segs = [{ h: 4, days: 2 }, { h: 6, days: 2 }, { h: 8, days: 2 }, { h: 12, days: 2 }];
+  const d = []; let cursor = new Date(START); let id = 0;
+  for (const s of segs)
+    for (let i = 0; i < s.days * (24 / s.h); i++) {
+      d.push({ id: id++, time: new Date(cursor) });
+      cursor = new Date(cursor.getTime() + s.h * 3600000);
+    }
+  return d;
+}
+
+const MEDS = [
+  { id: 'pred', name: 'Prednisolona 20 mg', badge: 'Comprimido', badgeBg: '#eaf6ef', badgeClr: '#1a6b3a', dot: '#2d9e5f', info: ['12/12h', '5 dias', 'Blister 20un'], doses: genDoses(12, 5) },
+  { id: 'salb', name: 'Salbutamol 100 µg', badge: 'Inalação', badgeBg: '#fef2ee', badgeClr: '#993c1d', dot: '#e2622a', info: ['Esquema crise', '8 dias', '200 doses'], crisis: '4/4h × 2d → 6/6h × 2d → 8/8h × 2d → 12/12h × 2d', doses: genSalb() },
+  { id: 'ipra', name: 'Ipratrópio 20 µg', badge: 'Inalação', badgeBg: '#eef4fb', badgeClr: '#1a4f82', dot: '#3a80c2', info: ['8/8h', '3 dias', '200 doses'], doses: genDoses(8, 3) },
+  { id: 'azit', name: 'Azitromicina 40 mg/ml', badge: 'Suspensão oral', badgeBg: '#f0eefe', badgeClr: '#4a3fa0', dot: '#7060d0', info: ['1×/dia', '3 dias', '30 ml'], doses: genDoses(24, 3) },
+];
+
+let state = {}, feverLog = [], paraLog = [], actLog = [];
+
+function fmt(d) { return d.toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }); }
+function fmtDay(d) {
+  const n = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+  return n[d.getDay()] + ' ' + d.getDate() + '/' + (d.getMonth() + 1);
+}
+function fmtFull(d) { return d.toLocaleString('pt-PT', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' }); }
+
+function setStatus(ok, msg) {
+  document.getElementById('statusDot').className = 'status-dot' + (ok ? '' : ' err');
+  document.getElementById('statusTxt').textContent = msg;
+}
+
+function loadLocal() {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (raw) {
+      const p = JSON.parse(raw);
+      state = p.state || {};
+      feverLog = p.feverLog || [];
+      paraLog = p.paraLog || [];
+      actLog = p.actLog || [];
+    }
+    setStatus(true, 'Dados carregados — ' + new Date().toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }));
+  } catch (e) {
+    setStatus(false, 'Erro ao carregar dados');
+  }
+  render();
+}
+
+function saveLocal() {
+  try {
+    localStorage.setItem(LS_KEY, JSON.stringify({ state, feverLog, paraLog, actLog }));
+    setStatus(true, 'Guardado — ' + new Date().toLocaleTimeString('pt-PT', { hour: '2-digit', minute: '2-digit' }));
+  } catch (e) {
+    setStatus(false, 'Erro ao guardar');
+  }
+}
+
+function addToLog(type, msg) {
+  actLog.unshift({ type, msg, at: new Date().toISOString() });
+  if (actLog.length > 100) actLog = actLog.slice(0, 100);
+}
+
+function toggle(medId, doseId) {
+  const key = medId + '_' + doseId;
+  const med = MEDS.find(m => m.id === medId);
+  const dose = med.doses.find(d => d.id === doseId);
+  const was = !!state[key];
+  if (!was) {
+    state[key] = { by: NOME, at: new Date().toISOString() };
+    addToLog('green', NOME + ' tomou ' + med.name + ' (' + fmt(dose.time) + ' ' + fmtDay(dose.time) + ')');
+  } else {
+    delete state[key];
+    addToLog('grey', NOME + ' desmarcou ' + med.name + ' (' + fmt(dose.time) + ' ' + fmtDay(dose.time) + ')');
+  }
+  saveLocal(); render();
+}
+
+function addFever() {
+  const t = parseFloat(document.getElementById('feverTemp').value);
+  const note = document.getElementById('feverNote').value.trim();
+  if (isNaN(t) || t < 35 || t > 42) { document.getElementById('feverTemp').focus(); return; }
+  feverLog.unshift({ temp: t, note, at: new Date().toISOString() });
+  if (feverLog.length > 50) feverLog = feverLog.slice(0, 50);
+  const alert = document.getElementById('feverAlert');
+  if (t >= 39.5) {
+    alert.className = 'fever-alert';
+    alert.style.display = 'block';
+    alert.textContent = '⚠ Febre alta (' + t.toFixed(1) + '°C). Contactar médico se persistir.';
+  } else if (t >= 38) {
+    alert.className = 'fever-alert warn';
+    alert.style.display = 'block';
+    alert.textContent = 'Temperatura elevada (' + t.toFixed(1) + '°C). Pode administrar Paracetamol se necessário.';
+  } else {
+    alert.style.display = 'none';
+  }
+  addToLog(t >= 38.5 ? 'red' : t >= 37.5 ? 'orange' : 'green', 'Febre: ' + t.toFixed(1) + '°C' + (note ? ' (' + note + ')' : ''));
+  document.getElementById('feverTemp').value = '';
+  document.getElementById('feverNote').value = '';
+  saveLocal(); render();
+}
+
+function delFever(i) {
+  if (!confirm('Apagar este registo de temperatura?')) return;
+  feverLog.splice(i, 1);
+  saveLocal(); render();
+}
+
+function addPara() {
+  const now = new Date();
+  if (paraLog.length > 0) {
+    const last = new Date(paraLog[0].at);
+    const diffH = (now - last) / 3600000;
+    if (diffH < 6) {
+      const rem = Math.ceil(6 - diffH);
+      const h = Math.floor(rem / 60), m = rem % 60;
+      alert('Intervalo mínimo de 6 horas.\nPróxima toma possível: ' + fmt(new Date(last.getTime() + 6 * 3600000)));
+      return;
+    }
+  }
+  const today = now.toDateString();
+  const todayCount = paraLog.filter(p => new Date(p.at).toDateString() === today).length;
+  if (todayCount >= 4) { alert('Máximo de 4 tomas de Paracetamol por dia atingido.'); return; }
+  const lastTemp = feverLog.length > 0 ? feverLog[0].temp : null;
+  paraLog.unshift({ at: now.toISOString(), by: NOME, temp: lastTemp });
+  if (paraLog.length > 40) paraLog = paraLog.slice(0, 40);
+  addToLog('orange', NOME + ' tomou Paracetamol' + (lastTemp ? ' (febre: ' + lastTemp.toFixed(1) + '°C)' : ''));
+  saveLocal(); render();
+}
+
+function render() {
+  const total = MEDS.reduce((s, m) => s + m.doses.length, 0);
+  const taken = Object.keys(state).length;
+  const pct = total > 0 ? Math.round(taken / total * 100) : 0;
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('progTxt').textContent = taken + ' de ' + total + ' doses (' + pct + '%)';
+
+  const container = document.getElementById('cards');
+  container.innerHTML = '';
+  MEDS.forEach(med => {
+    const card = document.createElement('div');
+    card.className = 'med-card';
+    let h = '<div class="med-hdr"><div class="med-dot" style="background:' + med.dot + '"></div>';
+    h += '<div class="med-name">' + med.name + '</div>';
+    h += '<span class="med-badge" style="background:' + med.badgeBg + ';color:' + med.badgeClr + '">' + med.badge + '</span></div>';
+    h += '<div class="med-info-row">' + med.info.map(i => '<span>' + i + '</span>').join('') + '</div>';
+    if (med.crisis) h += '<div class="crisis-box">' + med.crisis + '</div>';
+    h += '<div class="doses-section"><div class="doses-lbl">Doses</div><div class="doses-grid">';
+    med.doses.forEach(dose => {
+      const key = med.id + '_' + dose.id;
+      const tk = !!state[key];
+      h += '<div class="dose-pill' + (tk ? ' taken' : '') + '" onclick="toggle(\'' + med.id + '\',' + dose.id + ')">';
+      h += '<div class="d-check">✓</div>';
+      h += '<div class="d-time">' + fmt(dose.time) + '</div>';
+      h += '<div class="d-day">' + fmtDay(dose.time) + '</div>';
+      if (tk) h += '<div class="d-who">' + NOME + '</div>';
+      h += '</div>';
+    });
+    h += '</div></div>';
+    card.innerHTML = h;
+    container.appendChild(card);
+  });
+
+  // Febre
+  const fh = document.getElementById('feverHistory');
+  if (!feverLog.length) {
+    fh.innerHTML = '<div class="empty-history">Nenhum registo ainda.</div>';
+  } else {
+    fh.innerHTML = feverLog.slice(0, 15).map((f, i) => {
+      const cls = f.temp >= 38.5 ? 'high' : f.temp >= 37.5 ? 'mid' : 'ok';
+      return '<div class="fever-row">'
+        + '<span class="fever-temp ' + cls + '">' + f.temp.toFixed(1) + '°C</span>'
+        + '<span class="fever-meta">' + fmtFull(new Date(f.at)) + (f.note ? ' · ' + f.note : '') + '</span>'
+        + '<button class="del-btn" onclick="delFever(' + i + ')">apagar</button>'
+        + '</div>';
+    }).join('');
+  }
+
+  // Paracetamol
+  const pd = document.getElementById('paraDoses');
+  if (!paraLog.length) {
+    pd.innerHTML = '<div class="empty-history">Nenhuma toma registada.</div>';
+  } else {
+    pd.innerHTML = paraLog.slice(0, 20).map(p => {
+      const d = new Date(p.at);
+      return '<div class="para-pill">'
+        + '<div class="p-check">✓</div>'
+        + '<div class="p-time">' + fmt(d) + '</div>'
+        + '<div class="p-day">' + fmtDay(d) + '</div>'
+        + (p.temp ? '<div class="p-temp">' + p.temp.toFixed(1) + '°C</div>' : '')
+        + '</div>';
+    }).join('');
+  }
+
+  const pn = document.getElementById('paraNext');
+  if (paraLog.length > 0) {
+    const last = new Date(paraLog[0].at);
+    const next = new Date(last.getTime() + 6 * 3600000);
+    if (next > new Date()) {
+      pn.textContent = 'Próxima toma possível: ' + fmt(next) + ' (' + fmtDay(next) + ')';
+    } else {
+      pn.textContent = 'Pode ser administrado agora se necessário.';
+    }
+  } else { pn.textContent = ''; }
+
+  // Log
+  const ll = document.getElementById('logList');
+  if (!actLog.length) {
+    ll.innerHTML = '<div class="log-empty">Nenhuma atividade ainda.</div>';
+  } else {
+    ll.innerHTML = actLog.slice(0, 40).map(e => {
+      return '<div class="log-item"><div class="log-dot ' + e.type + '"></div>'
+        + '<div><div class="log-txt">' + e.msg + '</div>'
+        + '<div class="log-ts">' + fmtFull(new Date(e.at)) + '</div></div></div>';
+    }).join('');
+  }
+}
+
+loadLocal();
+</script>
+</body>
+</html>
