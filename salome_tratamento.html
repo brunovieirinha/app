@@ -16,7 +16,7 @@
   .btn-warn{background:var(--wa-bg);border-color:var(--wa-br);color:var(--wa-tx);}
   .btn-ok{background:var(--ok-bg);border-color:var(--ok-br);color:var(--ok-tx);}
 
-  /* Notificações banner */
+  /* Notificações */
   .notif-bar{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:var(--rs);margin-bottom:14px;font-size:13px;border:1px solid var(--border);}
   .notif-bar.off{background:#fafafa;color:var(--muted);}
   .notif-bar.on{background:var(--ok-bg);border-color:var(--ok-br);color:var(--ok-tx);}
@@ -25,6 +25,27 @@
   .notif-txt{flex:1;line-height:1.4;}
   .notif-txt small{display:block;font-size:11px;opacity:.8;margin-top:2px;}
 
+  /* Próximas tomas */
+  .next-section{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:18px;overflow:hidden;}
+  .next-hdr{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid var(--border);background:#fafafa;}
+  .next-hdr-title{font-size:14px;font-weight:600;flex:1;}
+  .next-hdr-sub{font-size:11px;color:var(--hint);}
+  .next-list{padding:6px 0;}
+  .next-item{display:flex;align-items:center;gap:12px;padding:9px 14px;border-bottom:1px solid var(--border);transition:background .15s;}
+  .next-item:last-child{border-bottom:none;}
+  .next-item.urgent{background:#fff8ec;}
+  .next-item.overdue{background:#fef2f2;}
+  .next-num{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;flex-shrink:0;}
+  .next-info{flex:1;}
+  .next-name{font-size:13px;font-weight:500;color:var(--text);}
+  .next-time{font-size:12px;color:var(--muted);margin-top:1px;}
+  .next-countdown{font-size:12px;font-weight:600;flex-shrink:0;text-align:right;}
+  .next-countdown.ok{color:var(--muted);}
+  .next-countdown.soon{color:#d97706;}
+  .next-countdown.urgent{color:#dc2626;}
+  .next-empty{padding:14px;font-size:13px;color:var(--hint);text-align:center;}
+
+  /* Status / sync */
   .sbar{display:flex;align-items:center;gap:8px;padding:7px 12px;background:var(--surface);border:1px solid var(--border);border-radius:var(--rs);margin-bottom:14px;font-size:12px;color:var(--muted);}
   .sdot{width:8px;height:8px;border-radius:50%;background:#2d9e5f;flex-shrink:0;}
   .sdot.err{background:#dc2626;}.sdot.warn{background:#d97706;}
@@ -35,8 +56,11 @@
   .prog-fill{height:100%;background:#2d9e5f;border-radius:99px;transition:width .4s;}
   .prog-txt{font-size:12px;color:var(--muted);white-space:nowrap;}
   .sec{font-size:15px;font-weight:600;margin:20px 0 10px;}
+
+  /* Med cards */
   .mcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden;}
   .mhdr{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);}
+  .mnum{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;color:#fff;}
   .mdot{width:10px;height:10px;border-radius:50%;flex-shrink:0;}
   .mname{font-size:14px;font-weight:600;flex:1;}
   .mbadge{font-size:11px;font-weight:500;padding:2px 9px;border-radius:99px;}
@@ -52,15 +76,19 @@
   .dp:hover{border-color:var(--border2);background:#f0ede8;}
   .dp.tk{background:var(--ok-bg);border-color:var(--ok-br);}
   .dp.adjusted{border-style:dashed;border-color:#7060d0;}
+  .dp.next-up{border-color:#d97706;border-width:2px;background:#fffbf0;}
   .dp .ck{font-size:12px;color:var(--ok-tx);opacity:0;line-height:1;}
   .dp.tk .ck{opacity:1;}
   .dp .dt{font-size:13px;font-weight:600;}
   .dp.tk .dt{color:var(--ok-tx);}
+  .dp.next-up .dt{color:#d97706;}
   .dp .dd{font-size:11px;color:var(--hint);}
   .dp.tk .dd{color:var(--ok-tx);}
   .dp .dw{font-size:10px;color:var(--ok-tx);max-width:64px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
   .dp .edit-btn{position:absolute;top:3px;right:3px;font-size:9px;color:var(--hint);cursor:pointer;padding:1px 4px;border-radius:3px;background:none;border:none;opacity:0;transition:opacity .15s;}
   .dp:hover .edit-btn{opacity:1;}
+
+  /* Modal */
   .modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:100;align-items:center;justify-content:center;}
   .modal-bg.open{display:flex;}
   .modal{background:var(--surface);border-radius:var(--r);padding:20px;width:290px;box-shadow:0 8px 32px rgba(0,0,0,.15);}
@@ -68,6 +96,8 @@
   .modal p{font-size:12px;color:var(--muted);margin-bottom:14px;line-height:1.5;}
   .modal input[type=time]{width:100%;font-size:15px;font-family:'DM Sans',sans-serif;padding:8px 10px;border-radius:var(--rs);border:1px solid var(--border2);background:var(--surface);color:var(--text);margin-bottom:12px;}
   .modal-btns{display:flex;gap:8px;justify-content:flex-end;}
+
+  /* Febre */
   .fcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);margin-bottom:10px;overflow:hidden;}
   .fhdr{display:flex;align-items:center;gap:10px;padding:11px 14px;border-bottom:1px solid var(--border);}
   .fbody{padding:12px 14px;}
@@ -84,6 +114,8 @@
   .fm{color:var(--muted);font-size:12px;flex:1;}
   .delbtn{font-size:11px;color:var(--hint);cursor:pointer;padding:2px 7px;border-radius:4px;border:1px solid var(--border);background:none;font-family:'DM Sans',sans-serif;}
   .delbtn:hover{color:#dc2626;border-color:#fca5a5;}
+
+  /* Paracetamol */
   .pcard{background:var(--surface);border:2px solid var(--wa-br);border-radius:var(--r);margin-bottom:10px;overflow:hidden;}
   .phdr{display:flex;align-items:center;gap:10px;padding:11px 14px;background:var(--wa-bg);border-bottom:1px solid var(--wa-br);}
   .pnote{padding:7px 14px;font-size:12px;color:var(--wa-tx);border-bottom:1px solid var(--border);background:#fffdf5;}
@@ -95,6 +127,8 @@
   .ppill .ptp{font-size:10px;color:var(--wa-tx);}
   .parow{display:flex;gap:8px;align-items:center;margin-top:8px;flex-wrap:wrap;}
   .pnxt{font-size:11px;color:var(--hint);}
+
+  /* Log */
   .lcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);overflow:hidden;margin-top:20px;}
   .lhdr{padding:11px 14px;border-bottom:1px solid var(--border);font-size:14px;font-weight:600;}
   .lbody{padding:4px 14px 10px;}
@@ -112,7 +146,7 @@
 <h1>Plano de Tratamento — Salomé</h1>
 <p class="sub">Iniciado a 23 de abril de 2026 · 10h00</p>
 
-<!-- Banner de notificações -->
+<!-- Notificações -->
 <div class="notif-bar off" id="notifBar">
   <span class="notif-icon">🔔</span>
   <div class="notif-txt">
@@ -122,6 +156,17 @@
   <button class="btn" id="notifBtn" onclick="requestNotif()">Ativar</button>
 </div>
 
+<!-- Próximas tomas -->
+<div class="next-section">
+  <div class="next-hdr">
+    <span style="font-size:16px">⏳</span>
+    <div class="next-hdr-title">Próximas tomas</div>
+    <span class="next-hdr-sub" id="nextHdrSub"></span>
+  </div>
+  <div id="nextList"><div class="next-empty">A carregar...</div></div>
+</div>
+
+<!-- Status Firebase -->
 <div class="sbar"><div class="sdot warn" id="sdot"></div><span id="stxt">A ligar ao Firebase...</span></div>
 <div class="sync-row">
   <button class="btn" onclick="doSync()">↺ Sincronizar</button>
@@ -169,7 +214,7 @@
   <div class="lbody" id="llist"><div class="emp">Nenhuma atividade ainda.</div></div>
 </div>
 
-<!-- Modal edição de hora -->
+<!-- Modal -->
 <div class="modal-bg" id="modalBg">
   <div class="modal">
     <h3>Ajustar hora da dose</h3>
@@ -185,7 +230,6 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
-// ---- Firebase ----
 firebase.initializeApp({
   apiKey: "AIzaSyAyKR1b_cWqh0tZCVad57i8NApVKUCRrtQ",
   databaseURL: "https://salome-tratamento-default-rtdb.europe-west1.firebasedatabase.app",
@@ -194,18 +238,20 @@ firebase.initializeApp({
 const db = firebase.database();
 const REF = db.ref('salome');
 
-// ---- Dados ----
 const NOME = 'Salomé';
 const START = new Date('2026-04-23T10:00:00');
+
+// cores dos medicamentos (para o numerador e próximas tomas)
+const MED_COLORS = ['#2d9e5f','#e2622a','#3a80c2','#7060d0'];
+
 let state={}, fLog=[], pLog=[], aLog=[], offsets={};
 let saving=false;
-// timers de notificação activos: {key: [timeoutId, timeoutId]}
-const notifTimers = {};
+const notifTimers={};
 
-function genBase(h, days){
+function genBase(h,days){
   const d=[];
   for(let i=0;i<days*(24/h);i++)
-    d.push({id:i, baseTime:new Date(START.getTime()+i*h*3600000), intervalH:h});
+    d.push({id:i,baseTime:new Date(START.getTime()+i*h*3600000),intervalH:h});
   return d;
 }
 function genSalbBase(){
@@ -232,7 +278,7 @@ const MEDS=[
   {id:'azit',name:'Azitromicina 40 mg/ml',badge:'Suspensão oral',bb:'#f0eefe',bc:'#4a3fa0',dot:'#7060d0',info:['1×/dia','3 dias'],baseDoses:genBase(24,3)},
 ];
 
-function applyOffsets(doses, medId){
+function applyOffsets(doses,medId){
   const result=doses.map(d=>({...d,time:new Date(d.baseTime)}));
   const keys=Object.keys(offsets)
     .filter(k=>k.startsWith(medId+'_'))
@@ -240,169 +286,83 @@ function applyOffsets(doses, medId){
     .sort((a,b)=>a.id-b.id);
   for(const {id,delta} of keys){
     let base=result[id].baseTime.getTime()+delta;
-    result[id].time=new Date(base);
-    result[id].adjusted=true;
+    result[id].time=new Date(base); result[id].adjusted=true;
     for(let i=id+1;i<result.length;i++){
       base+=result[i].intervalH*3600000;
-      result[i].time=new Date(base);
-      result[i].adjusted=true;
+      result[i].time=new Date(base); result[i].adjusted=true;
     }
     break;
   }
   return result;
 }
-
-function getDoses(med){ return applyOffsets(med.baseDoses, med.id); }
+function getDoses(med){ return applyOffsets(med.baseDoses,med.id); }
 
 const fmt=d=>d.toLocaleTimeString('pt-PT',{hour:'2-digit',minute:'2-digit'});
 const fmtD=d=>{const n=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];return n[d.getDay()]+' '+d.getDate()+'/'+(d.getMonth()+1);};
 const fmtF=d=>d.toLocaleString('pt-PT',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
 
+function countdown(ms){
+  if(ms<0) return 'em atraso';
+  const m=Math.floor(ms/60000);
+  if(m<60) return 'em '+m+'min';
+  const h=Math.floor(m/60),rm=m%60;
+  return 'em '+h+'h'+(rm>0?' '+rm+'min':'');
+}
+
 function setSt(t,m){const d=document.getElementById('sdot');d.className='sdot'+(t==='ok'?'':t==='warn'?' warn':' err');document.getElementById('stxt').textContent=m;}
 
 // ---- Notificações ----
 function updateNotifBar(){
-  const bar=document.getElementById('notifBar');
-  const txt=document.getElementById('notifTxt');
-  const sub=document.getElementById('notifSub');
-  const btn=document.getElementById('notifBtn');
-  if(!('Notification' in window)){
-    bar.className='notif-bar denied';
-    txt.textContent='Notificações não suportadas neste browser';
-    sub.textContent='Usa o Chrome no Android para receber alertas';
-    btn.style.display='none';
-    return;
-  }
-  if(Notification.permission==='granted'){
-    bar.className='notif-bar on';
-    txt.textContent='Alertas ativos';
-    sub.textContent='Receberás avisos 30 e 15 minutos antes de cada dose';
-    btn.textContent='Desativar';
-    btn.onclick=disableNotif;
-  } else if(Notification.permission==='denied'){
-    bar.className='notif-bar denied';
-    txt.textContent='Notificações bloqueadas';
-    sub.textContent='Vai às definições do browser e permite notificações para este site';
-    btn.style.display='none';
-  } else {
-    bar.className='notif-bar off';
-    txt.textContent='Ativar alertas de tomas';
-    sub.textContent='Receberás avisos 30 e 15 minutos antes de cada dose';
-    btn.textContent='Ativar';
-    btn.onclick=requestNotif;
-  }
+  const bar=document.getElementById('notifBar'),txt=document.getElementById('notifTxt'),sub=document.getElementById('notifSub'),btn=document.getElementById('notifBtn');
+  if(!('Notification' in window)){bar.className='notif-bar denied';txt.textContent='Notificações não suportadas';btn.style.display='none';return;}
+  if(Notification.permission==='granted'){bar.className='notif-bar on';txt.textContent='Alertas ativos';sub.textContent='Receberás avisos 30 e 15 minutos antes de cada dose';btn.textContent='Desativar';btn.onclick=disableNotif;}
+  else if(Notification.permission==='denied'){bar.className='notif-bar denied';txt.textContent='Notificações bloqueadas';sub.textContent='Permite notificações nas definições do browser';btn.style.display='none';}
+  else{bar.className='notif-bar off';txt.textContent='Ativar alertas de tomas';sub.textContent='Receberás avisos 30 e 15 minutos antes de cada dose';btn.textContent='Ativar';btn.onclick=requestNotif;}
 }
-
-async function requestNotif(){
-  const perm=await Notification.requestPermission();
-  updateNotifBar();
-  if(perm==='granted'){
-    scheduleAllNotifs();
-  }
-}
-
-function disableNotif(){
-  // cancela todos os timers
-  Object.values(notifTimers).forEach(timers=>timers.forEach(t=>clearTimeout(t)));
-  Object.keys(notifTimers).forEach(k=>delete notifTimers[k]);
-  updateNotifBar();
-}
+async function requestNotif(){const p=await Notification.requestPermission();updateNotifBar();if(p==='granted')scheduleAllNotifs();}
+function disableNotif(){Object.values(notifTimers).forEach(ts=>ts.forEach(t=>clearTimeout(t)));Object.keys(notifTimers).forEach(k=>delete notifTimers[k]);updateNotifBar();}
 
 function scheduleAllNotifs(){
-  if(Notification.permission!=='granted') return;
+  if(Notification.permission!=='granted')return;
   const now=Date.now();
-
-  // cancela timers existentes
-  Object.values(notifTimers).forEach(timers=>timers.forEach(t=>clearTimeout(t)));
+  Object.values(notifTimers).forEach(ts=>ts.forEach(t=>clearTimeout(t)));
   Object.keys(notifTimers).forEach(k=>delete notifTimers[k]);
-
   MEDS.forEach(med=>{
-    const doses=getDoses(med);
-    doses.forEach(dose=>{
+    getDoses(med).forEach(dose=>{
       const key=med.id+'_'+dose.id;
-      // não notifica doses já tomadas
-      if(state[key]) return;
-
-      const doseTs=dose.time.getTime();
-      const timers=[];
-
-      // alerta 30 min antes
-      const t30=doseTs - 30*60*1000;
-      if(t30 > now){
-        timers.push(setTimeout(()=>{
-          if(!state[key]){
-            new Notification('💊 Toma em 30 minutos — Salomé', {
-              body: med.name+' às '+fmt(dose.time)+' ('+fmtD(dose.time)+')',
-              icon: 'https://cdn-icons-png.flaticon.com/512/1046/1046857.png',
-              tag: key+'_30',
-              renotify: true,
-            });
-          }
-        }, t30-now));
-      }
-
-      // alerta 15 min antes
-      const t15=doseTs - 15*60*1000;
-      if(t15 > now){
-        timers.push(setTimeout(()=>{
-          if(!state[key]){
-            new Notification('⏰ Toma em 15 minutos — Salomé', {
-              body: med.name+' às '+fmt(dose.time)+' ('+fmtD(dose.time)+')',
-              icon: 'https://cdn-icons-png.flaticon.com/512/1046/1046857.png',
-              tag: key+'_15',
-              renotify: true,
-            });
-          }
-        }, t15-now));
-      }
-
-      if(timers.length) notifTimers[key]=timers;
+      if(state[key])return;
+      const ts=dose.time.getTime(),timers=[];
+      const t30=ts-30*60000; if(t30>now) timers.push(setTimeout(()=>{if(!state[key])new Notification('💊 Toma em 30 minutos — Salomé',{body:med.name+' às '+fmt(dose.time)+' ('+fmtD(dose.time)+')',tag:key+'_30',renotify:true});},t30-now));
+      const t15=ts-15*60000; if(t15>now) timers.push(setTimeout(()=>{if(!state[key])new Notification('⏰ Toma em 15 minutos — Salomé',{body:med.name+' às '+fmt(dose.time)+' ('+fmtD(dose.time)+')',tag:key+'_15',renotify:true});},t15-now));
+      if(timers.length)notifTimers[key]=timers;
     });
   });
 }
 
-// ---- Firebase listener ----
-REF.on('value', snap=>{
+// ---- Firebase ----
+REF.on('value',snap=>{
   const data=snap.val()||{};
-  state=data.state||{}; fLog=data.fLog||[]; pLog=data.pLog||[]; aLog=data.aLog||[];
-  offsets=data.offsets||{};
+  state=data.state||{}; fLog=data.fLog||[]; pLog=data.pLog||[]; aLog=data.aLog||[]; offsets=data.offsets||{};
   document.getElementById('lsync').textContent='Sincronizado às '+fmt(new Date());
   setSt('ok','Ligado — sincronização em tempo real');
-  scheduleAllNotifs();
-  render();
-}, err=>setSt('err','Erro Firebase: '+err.message));
+  scheduleAllNotifs(); render();
+},err=>setSt('err','Erro Firebase: '+err.message));
 
 async function save(){
-  if(saving)return; saving=true;
-  setSt('warn','A guardar...');
-  try{
-    await REF.set({state,fLog,pLog,aLog,offsets});
-    setSt('ok','Guardado — '+fmt(new Date()));
-  }catch(e){ setSt('err','Erro: '+e.message); }
+  if(saving)return; saving=true; setSt('warn','A guardar...');
+  try{await REF.set({state,fLog,pLog,aLog,offsets});setSt('ok','Guardado — '+fmt(new Date()));}
+  catch(e){setSt('err','Erro: '+e.message);}
   saving=false;
 }
+function doSync(){REF.once('value',snap=>{const d=snap.val()||{};state=d.state||{};fLog=d.fLog||[];pLog=d.pLog||[];aLog=d.aLog||[];offsets=d.offsets||{};setSt('ok','Sincronizado — '+fmt(new Date()));scheduleAllNotifs();render();});}
 
-function doSync(){ REF.once('value',snap=>{const d=snap.val()||{};state=d.state||{};fLog=d.fLog||[];pLog=d.pLog||[];aLog=d.aLog||[];offsets=d.offsets||{};setSt('ok','Sincronizado — '+fmt(new Date()));scheduleAllNotifs();render();}); }
+function log(t,m){aLog.unshift({t,m,at:new Date().toISOString()});if(aLog.length>100)aLog=aLog.slice(0,100);}
 
-function log(t,m){ aLog.unshift({t,m,at:new Date().toISOString()}); if(aLog.length>100)aLog=aLog.slice(0,100); }
-
-// ---- Toggle toma ----
+// ---- Toggle ----
 function toggle(mid,did){
-  const key=mid+'_'+did;
-  const med=MEDS.find(x=>x.id===mid);
-  const doses=getDoses(med);
-  const dose=doses.find(x=>x.id===did);
-  const was=!!state[key];
-  if(!was){
-    state[key]={by:NOME,at:new Date().toISOString()};
-    log('g',NOME+' tomou '+med.name+' ('+fmt(dose.time)+' '+fmtD(dose.time)+')');
-    // cancela notificações desta dose
-    if(notifTimers[key]){ notifTimers[key].forEach(t=>clearTimeout(t)); delete notifTimers[key]; }
-  } else {
-    delete state[key];
-    log('gr',NOME+' desmarcou '+med.name+' ('+fmt(dose.time)+' '+fmtD(dose.time)+')');
-    scheduleAllNotifs();
-  }
+  const key=mid+'_'+did,med=MEDS.find(x=>x.id===mid),doses=getDoses(med),dose=doses.find(x=>x.id===did),was=!!state[key];
+  if(!was){state[key]={by:NOME,at:new Date().toISOString()};log('g',NOME+' tomou '+med.name+' ('+fmt(dose.time)+' '+fmtD(dose.time)+')');if(notifTimers[key]){notifTimers[key].forEach(t=>clearTimeout(t));delete notifTimers[key];}}
+  else{delete state[key];log('gr',NOME+' desmarcou '+med.name+' ('+fmt(dose.time)+' '+fmtD(dose.time)+')');scheduleAllNotifs();}
   save(); render();
 }
 
@@ -410,34 +370,26 @@ function toggle(mid,did){
 let editCtx=null;
 function openEdit(e,mid,did){
   e.stopPropagation();
-  const med=MEDS.find(x=>x.id===mid);
-  const doses=getDoses(med);
-  const dose=doses.find(x=>x.id===did);
+  const med=MEDS.find(x=>x.id===mid),doses=getDoses(med),dose=doses.find(x=>x.id===did);
   editCtx={mid,did};
   document.getElementById('modalDesc').textContent=med.name+' — dose '+(did+1)+' de '+doses.length+'\nAs doses seguintes recalculam automaticamente.';
   document.getElementById('modalTime').value=fmt(dose.time).replace('h',':');
   document.getElementById('modalBg').classList.add('open');
 }
-function closeModal(){ document.getElementById('modalBg').classList.remove('open'); editCtx=null; }
+function closeModal(){document.getElementById('modalBg').classList.remove('open');editCtx=null;}
 function confirmModal(){
   if(!editCtx)return;
-  const {mid,did}=editCtx;
-  const val=document.getElementById('modalTime').value;
+  const {mid,did}=editCtx,val=document.getElementById('modalTime').value;
   if(!val){closeModal();return;}
   const [hh,mm]=val.split(':').map(Number);
-  const med=MEDS.find(x=>x.id===mid);
-  const doses=getDoses(med);
-  const dose=doses.find(x=>x.id===did);
-  const newTime=new Date(dose.time);
-  newTime.setHours(hh,mm,0,0);
-  if(did>0 && newTime<=doses[did-1].time) newTime.setDate(newTime.getDate()+1);
+  const med=MEDS.find(x=>x.id===mid),doses=getDoses(med),dose=doses.find(x=>x.id===did);
+  const newTime=new Date(dose.time); newTime.setHours(hh,mm,0,0);
+  if(did>0&&newTime<=doses[did-1].time)newTime.setDate(newTime.getDate()+1);
   const delta=newTime.getTime()-dose.baseTime.getTime();
-  const toRemove=Object.keys(offsets).filter(k=>k.startsWith(mid+'_')&&parseInt(k.split('_')[1])>=did);
-  toRemove.forEach(k=>delete offsets[k]);
+  Object.keys(offsets).filter(k=>k.startsWith(mid+'_')&&parseInt(k.split('_')[1])>=did).forEach(k=>delete offsets[k]);
   offsets[mid+'_'+did]=delta;
   log('p','Hora ajustada — '+med.name+' dose '+(did+1)+' → '+fmt(newTime)+' '+fmtD(newTime));
-  closeModal();
-  save(); scheduleAllNotifs(); render();
+  closeModal(); save(); scheduleAllNotifs(); render();
 }
 
 // ---- Febre ----
@@ -453,7 +405,7 @@ function doFever(){
   document.getElementById('ftemp').value=''; document.getElementById('fnote').value='';
   save(); render();
 }
-function delF(i){ if(!confirm('Apagar registo?'))return; fLog.splice(i,1); save(); render(); }
+function delF(i){if(!confirm('Apagar registo?'))return;fLog.splice(i,1);save();render();}
 
 // ---- Paracetamol ----
 function doPara(){
@@ -468,65 +420,114 @@ function doPara(){
 
 // ---- Render ----
 function render(){
+  const now=Date.now();
   const tot=MEDS.reduce((s,m)=>s+m.baseDoses.length,0);
   const tak=Object.keys(state).length;
   const pct=tot>0?Math.round(tak/tot*100):0;
   document.getElementById('pf').style.width=pct+'%';
   document.getElementById('pt').textContent=tak+' de '+tot+' doses ('+pct+'%)';
 
+  // --- Próximas tomas ---
+  // recolhe a próxima dose não tomada de cada medicamento
+  const nextItems=[];
+  MEDS.forEach((med,mi)=>{
+    const doses=getDoses(med);
+    const next=doses.find(d=>!state[med.id+'_'+d.id]);
+    if(next) nextItems.push({med,dose:next,mi,ts:next.time.getTime()});
+  });
+  nextItems.sort((a,b)=>a.ts-b.ts);
+
+  const nl=document.getElementById('nextList');
+  document.getElementById('nextHdrSub').textContent=nextItems.length?nextItems.length+' medicamento'+(nextItems.length>1?'s':'')+'':'';
+
+  if(!nextItems.length){
+    nl.innerHTML='<div class="next-empty">✅ Todas as tomas concluídas!</div>';
+  } else {
+    nl.innerHTML=nextItems.map(({med,dose,mi})=>{
+      const diff=dose.time.getTime()-now;
+      const isUrgent=diff>0&&diff<30*60000;
+      const isOverdue=diff<=0;
+      const cdClass=isOverdue?'urgent':isUrgent?'soon':'ok';
+      const rowClass=isOverdue?'overdue':isUrgent?'urgent':'';
+      const cdTxt=isOverdue?'em atraso! ('+fmt(dose.time)+')':countdown(diff);
+      return '<div class="next-item '+rowClass+'">'
+        +'<div class="next-num" style="background:'+MED_COLORS[mi]+'">'+(mi+1)+'</div>'
+        +'<div class="next-info">'
+        +'<div class="next-name">'+med.name+'</div>'
+        +'<div class="next-time">'+fmt(dose.time)+' · '+fmtD(dose.time)+'</div>'
+        +'</div>'
+        +'<div class="next-countdown '+cdClass+'">'+cdTxt+'</div>'
+        +'</div>';
+    }).join('');
+  }
+
+  // --- Cards medicamentos ---
   const container=document.getElementById('cards'); container.innerHTML='';
-  MEDS.forEach(med=>{
+
+  // determina quais as próximas doses (a destacar na pill)
+  const nextKeys=new Set(nextItems.map(x=>x.med.id+'_'+x.dose.id));
+
+  MEDS.forEach((med,mi)=>{
     const doses=getDoses(med);
     const card=document.createElement('div'); card.className='mcard';
-    let h='<div class="mhdr"><div class="mdot" style="background:'+med.dot+'"></div><div class="mname">'+med.name+'</div><span class="mbadge" style="background:'+med.bb+';color:'+med.bc+'">'+med.badge+'</span></div>';
+    let h='<div class="mhdr">'
+      +'<div class="mnum" style="background:'+MED_COLORS[mi]+'">'+(mi+1)+'</div>'
+      +'<div class="mname">'+med.name+'</div>'
+      +'<span class="mbadge" style="background:'+med.bb+';color:'+med.bc+'">'+med.badge+'</span></div>';
     h+='<div class="minfo">'+med.info.map(i=>'<span>'+i+'</span>').join('')+'</div>';
     h+='<div class="dsec"><div class="dlbl">Doses <span style="font-size:10px;font-weight:400;color:var(--hint)">(✎ para ajustar hora)</span></div>';
 
     const renderDose=d=>{
-      const k=med.id+'_'+d.id, tk=!!state[k];
-      let dp='<div class="dp'+(tk?' tk':'')+(d.adjusted?' adjusted':'')+'" onclick="toggle(\''+med.id+'\','+d.id+')">';
+      const k=med.id+'_'+d.id, tk=!!state[k], isNext=nextKeys.has(k);
+      let cls='dp'+(tk?' tk':'')+(d.adjusted&&!tk?' adjusted':'')+(isNext&&!tk?' next-up':'');
+      let dp='<div class="'+cls+'" onclick="toggle(\''+med.id+'\','+d.id+')">';
       dp+='<button class="edit-btn" onclick="openEdit(event,\''+med.id+'\','+d.id+')">✎</button>';
       dp+='<div class="ck">✓</div><div class="dt">'+fmt(d.time)+'</div><div class="dd">'+fmtD(d.time)+'</div>';
-      if(tk) dp+='<div class="dw">'+NOME+'</div>';
+      if(tk)dp+='<div class="dw">'+NOME+'</div>';
       dp+='</div>';
       return dp;
     };
 
     if(med.hasSeg){
       const segs={};
-      doses.forEach(d=>{ const s=d.seg||'Outras'; if(!segs[s])segs[s]=[]; segs[s].push(d); });
+      doses.forEach(d=>{const s=d.seg||'Outras';if(!segs[s])segs[s]=[];segs[s].push(d);});
       for(const [label,sdoses] of Object.entries(segs)){
         h+='<div class="seg-label">'+label+'</div><div class="dgrid">';
-        sdoses.forEach(d=>{ h+=renderDose(d); });
+        sdoses.forEach(d=>{h+=renderDose(d);});
         h+='</div>';
       }
     } else {
       h+='<div class="dgrid">';
-      doses.forEach(d=>{ h+=renderDose(d); });
+      doses.forEach(d=>{h+=renderDose(d);});
       h+='</div>';
     }
     h+='</div>';
     card.innerHTML=h; container.appendChild(card);
   });
 
+  // --- Febre ---
   document.getElementById('fhist').innerHTML=!fLog.length?'<div class="emp">Nenhum registo ainda.</div>':
     fLog.slice(0,15).map((f,i)=>'<div class="frow"><span class="ft '+(f.temp>=38.5?'hi':f.temp>=37.5?'mi':'ok')+'">'+f.temp.toFixed(1)+'°C</span><span class="fm">'+fmtF(new Date(f.at))+(f.note?' · '+f.note:'')+'</span><button class="delbtn" onclick="delF('+i+')">apagar</button></div>').join('');
 
+  // --- Paracetamol ---
   document.getElementById('pdoses').innerHTML=!pLog.length?'<div class="emp">Nenhuma toma registada.</div>':
     pLog.slice(0,20).map(p=>{const d=new Date(p.at);return'<div class="ppill"><div class="pck">✓</div><div class="ptt">'+fmt(d)+'</div><div class="pdd">'+fmtD(d)+'</div>'+(p.temp?'<div class="ptp">'+p.temp.toFixed(1)+'°C</div>':'')+'</div>';}).join('');
 
   if(pLog.length>0){const l=new Date(pLog[0].at),nx=new Date(l.getTime()+6*3600000);document.getElementById('pnxt').textContent=nx>new Date()?'Próxima toma: '+fmt(nx)+' ('+fmtD(nx)+')':'Pode tomar agora se necessário.';}
   else document.getElementById('pnxt').textContent='';
 
+  // --- Log ---
   document.getElementById('llist').innerHTML=!aLog.length?'<div class="emp">Nenhuma atividade ainda.</div>':
     aLog.slice(0,40).map(e=>'<div class="li"><div class="ldot '+(e.t==='g'?'g':e.t==='o'?'o':e.t==='r'?'r':e.t==='p'?'p':'gr')+'"></div><div><div class="lt">'+e.m+'</div><div class="lts">'+fmtF(new Date(e.at))+'</div></div></div>').join('');
 }
 
 document.getElementById('modalBg').addEventListener('click',function(e){if(e.target===this)closeModal();});
 
-// ---- Init ----
+// atualiza o countdown a cada minuto
+setInterval(render, 60000);
+
+// Init
 updateNotifBar();
-// se já tinha permissão, agenda imediatamente
 if(Notification.permission==='granted') scheduleAllNotifs();
 </script>
 </body>
