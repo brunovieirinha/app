@@ -1,0 +1,3 @@
+Coloque aqui as fotografias dos projetos.
+Os nomes de ficheiro esperados estão em img/IMAGENS-A-FORNECER.txt.
+Enquanto uma fotografia faltar, o site mostra um placeholder elegante.

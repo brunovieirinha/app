@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <!-- ==================================================================
+       VIEIRINHA040726 — criação inicial do site
+       FERRACUTI — Arquitetura e Design de Interiores
+       Todo o conteúdo editável (projetos, depoimentos, contactos, sobre)
+       vive em conteudo.js — este ficheiro só contém estrutura, estilo e
+       comportamento. Não editar conteúdo aqui.
+       ================================================================== -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ferracuti — Arquitetura e Design de Interiores</title>
+  <meta name="description" content="Ferracuti — estúdio de arquitetura e design de interiores da Arq. Sandra Ferracuti. Criamos espaços que contam histórias e trazem conforto e felicidade à vida das pessoas.">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="pt_PT">
+  <meta property="og:site_name" content="Ferracuti — Arquitetura e Design de Interiores">
+  <meta property="og:title" content="Ferracuti — Arquitetura e Design de Interiores">
+  <meta property="og:description" content="Criamos espaços que contam histórias e trazem conforto e felicidade à vida das pessoas.">
+  <meta property="og:image" content="img/og-image.jpg">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Ferracuti — Arquitetura e Design de Interiores">
+  <meta name="twitter:description" content="Criamos espaços que contam histórias e trazem conforto e felicidade à vida das pessoas.">
+  <meta name="twitter:image" content="img/og-image.jpg">
+
+  <!-- Favicon (SVG embutido — sem ficheiro externo) -->
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%23F7F5F0'/%3E%3Ctext x='32' y='46' font-family='Georgia,serif' font-size='40' text-anchor='middle' fill='%235C6647'%3EF%3C/text%3E%3C/svg%3E">
+
+  <!-- Tipografia: Fraunces (display) + Work Sans (corpo) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    /* ================================================================
+       1. FUNDAÇÕES — paleta, reset, tipografia
+       ================================================================ */
+    :root {
+      --papel:   #F7F5F0;   /* fundo principal, papel quente        */
+      --areia:   #E9E3D6;   /* blocos secundários                   */
+      --carvao:  #26241F;   /* texto principal                      */
+      --cinza:   #57534A;   /* texto secundário                     */
+      --oliva:   #5C6647;   /* acento único                         */
+      --oliva-2: #47503A;   /* acento em hover                      */
+      --linha:   #C9C2B2;   /* linhas e divisores                   */
+      --raio: 2px;
+      --display: "Fraunces", Georgia, serif;
+      --corpo: "Work Sans", -apple-system, Helvetica, Arial, sans-serif;
+      /* trama de corte arquitetónico usada nos placeholders */
+      --trama: repeating-linear-gradient(45deg,
+                 transparent 0 9px, rgba(38, 36, 31, .09) 9px 10px);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto; }
+    }
+
+    body {
+      background: var(--papel);
+      color: var(--carvao);
+      font-family: var(--corpo);
+      font-weight: 300;
+      font-size: 1.0625rem;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    img { max-width: 100%; display: block; }
+
+    h1, h2, h3 {
+      font-family: var(--display);
+      font-weight: 400;
+      line-height: 1.15;
+      letter-spacing: .01em;
+    }
+
+    a { color: inherit; }
+
+    :focus-visible {
+      outline: 2px solid var(--oliva);
+      outline-offset: 3px;
+    }
+
+    ::selection { background: var(--oliva); color: var(--papel); }
+
+    .contentor {
+      width: min(1180px, 100% - 3rem);
+      margin-inline: auto;
+    }
+    @media (max-width: 640px) {
+      .contentor { width: calc(100% - 2.5rem); }
+    }
+
+    /* ligação para saltar navegação (acessibilidade) */
+    .saltar {
+      position: absolute; left: -999px; top: 0; z-index: 300;
+      background: var(--carvao); color: var(--papel);
+      padding: .75rem 1.25rem; font-size: .9rem;
+    }
+    .saltar:focus { left: 0; }
+
+    /* ================================================================
+       2. COMPONENTES DE ASSINATURA
+       — divisor "linha de cota" e placeholder com trama
+       ================================================================ */
+
+    /* Divisor de secção em estilo linha de cota de desenho técnico:
+       linha fina com traços oblíquos nas extremidades + etiqueta. */
+    .cota {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+      padding: 4.5rem 0 3.5rem;
+    }
+    .cota-linha {
+      position: relative;
+      flex: 1;
+      height: 1px;
+      background: var(--linha);
+    }
+    .cota-linha::before,
+    .cota-linha::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 13px;
+      height: 1px;
+      background: var(--carvao);
+      transform: translateY(-50%) rotate(-45deg);
+    }
+    .cota-linha::before { left: -3px; }
+    .cota-linha::after  { right: -3px; }
+    .cota-rotulo {
+      font-size: .72rem;
+      font-weight: 500;
+      letter-spacing: .38em;
+      text-transform: uppercase;
+      color: var(--cinza);
+      white-space: nowrap;
+      text-indent: .38em; /* compensa o letter-spacing final */
+    }
+
+    /* Placeholder elegante para imagens em falta:
+       trama de corte arquitetónico + moldura fina + rótulo. */
+    .quadro {
+      display: block;
+      position: relative;
+      overflow: hidden;
+      border-radius: var(--raio);
+      background-color: var(--areia);
+      background-image: var(--trama);
+    }
+    .quadro::before {
+      content: "";
+      position: absolute;
+      inset: 10px;
+      border: 1px solid var(--linha);
+      border-radius: var(--raio);
+      pointer-events: none;
+    }
+    .quadro-rotulo {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: .5rem;
+      padding: 1.5rem;
+      text-align: center;
+      pointer-events: none;
+    }
+    .quadro-rotulo strong {
+      font-family: var(--display);
+      font-weight: 400;
+      font-size: 1.05rem;
+      color: var(--cinza);
+    }
+    .quadro-rotulo span {
+      font-size: .62rem;
+      font-weight: 500;
+      letter-spacing: .32em;
+      text-transform: uppercase;
+      color: var(--cinza);
+      opacity: .7;
+      text-indent: .32em;
+    }
+    .quadro img {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    /* quando a imagem falha, esconde-se e fica a trama à vista */
+    .quadro img.falhou { display: none; }
+
+    /* ================================================================
+       3. BOTÕES
+       ================================================================ */
+    .botao {
+      display: inline-flex;
+      align-items: center;
+      gap: .6rem;
+      padding: .95rem 1.9rem;
+      border: 1px solid transparent;
+      border-radius: var(--raio);
+      font-family: var(--corpo);
+      font-size: .82rem;
+      font-weight: 500;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background .25s ease, color .25s ease, border-color .25s ease;
+    }
+    .botao svg { width: 17px; height: 17px; flex: none; }
+    .botao-cheio {
+      background: var(--oliva);
+      color: #fff;
+    }
+    .botao-cheio:hover { background: var(--oliva-2); }
+    .botao-contorno {
+      border-color: currentColor;
+      color: var(--carvao);
+      background: transparent;
+    }
+    .botao-contorno:hover { color: var(--oliva-2); }
+    .botao-claro {
+      border-color: rgba(255,255,255,.55);
+      color: #fff;
+      background: transparent;
+    }
+    .botao-claro:hover { border-color: #fff; background: rgba(255,255,255,.1); }
+
+    /* ================================================================
+       4. CABEÇALHO — transparente, ganha fundo ao rolar
+       ================================================================ */
+    .cabecalho {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      transition: background .3s ease, border-color .3s ease, box-shadow .3s ease;
+      border-bottom: 1px solid transparent;
+    }
+    .cabecalho.solido {
+      background: rgba(247, 245, 240, .94);
+      border-bottom-color: var(--linha);
+      backdrop-filter: blur(8px);
+    }
+    .cabecalho-interior {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+      padding: 1.1rem 0;
+    }
+    .marca {
+      font-family: var(--display);
+      font-weight: 500;
+      font-size: 1.28rem;
+      letter-spacing: .3em;
+      text-decoration: none;
+      color: var(--carvao);
+      transition: color .3s ease;
+    }
+    .nav-principal ul {
+      display: flex;
+      gap: 2.4rem;
+      list-style: none;
+    }
+    .nav-principal a {
+      font-size: .78rem;
+      font-weight: 500;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      text-decoration: none;
+      color: var(--carvao);
+      padding: .4rem 0;
+      border-bottom: 1px solid transparent;
+      transition: color .25s ease, border-color .25s ease;
+    }
+    .nav-principal a:hover { color: var(--oliva-2); border-bottom-color: var(--oliva-2); }
+
+    /* sobre o hero com fotografia, o cabeçalho fica em claro */
+    body.hero-com-foto .cabecalho:not(.solido) .marca,
+    body.hero-com-foto .cabecalho:not(.solido) .nav-principal a { color: #fff; }
+    body.hero-com-foto .cabecalho:not(.solido) .nav-principal a:hover { border-bottom-color: #fff; }
+    body.hero-com-foto .cabecalho:not(.solido) .hamburguer span { background: #fff; }
+
+    /* menu hambúrguer (mobile) */
+    .hamburguer {
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      gap: 6px;
+      width: 44px; height: 44px;
+      padding: 10px;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .hamburguer span {
+      display: block;
+      height: 1.5px;
+      background: var(--carvao);
+      transition: transform .3s ease, opacity .3s ease, background .3s ease;
+    }
+    .hamburguer[aria-expanded="true"] span:nth-child(1) { transform: translateY(7.5px) rotate(45deg); }
+    .hamburguer[aria-expanded="true"] span:nth-child(2) { opacity: 0; }
+    .hamburguer[aria-expanded="true"] span:nth-child(3) { transform: translateY(-7.5px) rotate(-45deg); }
+
+    @media (max-width: 820px) {
+      .hamburguer { display: flex; }
+      .nav-principal {
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: var(--papel);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .3s ease, visibility .3s ease;
+      }
+      .nav-principal.aberto { opacity: 1; visibility: visible; }
+      .nav-principal ul {
+        flex-direction: column;
+        align-items: center;
+        gap: 2.2rem;
+      }
+      .nav-principal a {
+        font-family: var(--display);
+        font-size: 1.5rem;
+        font-weight: 400;
+        letter-spacing: .1em;
+        text-transform: none;
+        color: var(--carvao) !important;
+      }
+      body.menu-aberto { overflow: hidden; }
+      body.menu-aberto .cabecalho { background: var(--papel); }
+      body.menu-aberto .marca { color: var(--carvao) !important; }
+      body.menu-aberto .hamburguer span { background: var(--carvao) !important; }
+    }
+
+    /* ================================================================
+       5. HERO
+       ================================================================ */
+    .hero {
+      position: relative;
+      min-height: 100svh;
+      display: flex;
+      align-items: flex-end;
+      /* trama de fundo — visível enquanto não há fotografia */
+      background-color: var(--areia);
+      background-image: var(--trama);
+      overflow: hidden;
+    }
+    .hero-foto {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .hero-foto.falhou { display: none; }
+    .hero-veu {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top,
+        rgba(20, 19, 16, .72) 0%,
+        rgba(20, 19, 16, .28) 45%,
+        rgba(20, 19, 16, .18) 100%);
+      opacity: 0;
+      transition: opacity .5s ease;
+    }
+    body.hero-com-foto .hero-veu { opacity: 1; }
+
+    .hero-conteudo {
+      position: relative;
+      z-index: 1;
+      width: min(1180px, 100% - 3rem);
+      margin: 0 auto;
+      padding: 8rem 0 5.5rem;
+    }
+    .hero-antetitulo {
+      font-size: .74rem;
+      font-weight: 500;
+      letter-spacing: .42em;
+      text-transform: uppercase;
+      color: var(--cinza);
+      margin-bottom: 1.6rem;
+    }
+    .hero-titulo {
+      font-size: clamp(3.4rem, 11vw, 8.2rem);
+      font-weight: 300;
+      letter-spacing: .12em;
+      color: var(--carvao);
+      margin-left: -.04em;
+    }
+    .hero-tagline {
+      max-width: 34em;
+      margin-top: 1.4rem;
+      font-size: clamp(1.02rem, 1.6vw, 1.2rem);
+      color: var(--cinza);
+    }
+    .hero-acoes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 2.6rem;
+    }
+    body.hero-com-foto .hero-antetitulo { color: rgba(255,255,255,.75); }
+    body.hero-com-foto .hero-titulo    { color: #fff; }
+    body.hero-com-foto .hero-tagline   { color: rgba(255,255,255,.88); }
+
+    /* botão de contorno adapta-se ao hero com/sem fotografia */
+    .hero .botao-adaptavel { border: 1px solid currentColor; color: var(--carvao); background: transparent; }
+    .hero .botao-adaptavel:hover { color: var(--oliva-2); }
+    body.hero-com-foto .hero .botao-adaptavel { color: #fff; border-color: rgba(255,255,255,.55); }
+    body.hero-com-foto .hero .botao-adaptavel:hover { border-color: #fff; background: rgba(255,255,255,.1); }
+
+    .hero-indicador {
+      position: absolute;
+      right: calc((100% - min(1180px, 100% - 3rem)) / 2);
+      bottom: 5.5rem;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: .8rem;
+      font-size: .66rem;
+      font-weight: 500;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      color: var(--cinza);
+      writing-mode: vertical-rl;
+    }
+    .hero-indicador::after {
+      content: "";
+      width: 1px;
+      height: 52px;
+      background: currentColor;
+      opacity: .5;
+    }
+    body.hero-com-foto .hero-indicador { color: rgba(255,255,255,.8); }
+    @media (max-width: 820px) { .hero-indicador { display: none; } }
+
+    /* ================================================================
+       6. SECÇÕES GENÉRICAS
+       ================================================================ */
+    section { scroll-margin-top: 4.5rem; }
+
+    .sec-cabeca { max-width: 42em; margin-bottom: 3rem; }
+    .sec-titulo {
+      font-size: clamp(1.9rem, 4vw, 2.7rem);
+      font-weight: 400;
+    }
+    .sec-texto { margin-top: 1rem; color: var(--cinza); }
+
+    /* ================================================================
+       7. SERVIÇOS
+       ================================================================ */
+    .servicos-grelha {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      align-items: stretch;
+    }
+    @media (max-width: 900px) { .servicos-grelha { grid-template-columns: 1fr; } }
+
+    .servico {
+      display: flex;
+      flex-direction: column;
+      padding: 2.4rem 2.1rem 2.6rem;
+      background: var(--areia);
+      border-radius: var(--raio);
+      border-top: 1px solid var(--linha);
+    }
+    /* grelha assimétrica em ecrãs largos: o bloco central desce */
+    @media (min-width: 901px) {
+      .servico:nth-child(2) { transform: translateY(2.4rem); }
+    }
+    .servico-numero {
+      font-family: var(--display);
+      font-size: .95rem;
+      color: var(--oliva);
+      letter-spacing: .2em;
+      margin-bottom: 1.6rem;
+    }
+    .servico h3 {
+      font-size: 1.45rem;
+      margin-bottom: .9rem;
+    }
+    .servico p {
+      color: var(--cinza);
+      font-size: .98rem;
+      margin-bottom: 1.2rem;
+    }
+    .servico ul {
+      list-style: none;
+      margin-top: auto;
+      border-top: 1px solid var(--linha);
+      padding-top: 1.2rem;
+      display: grid;
+      gap: .55rem;
+    }
+    .servico li {
+      position: relative;
+      padding-left: 1.3rem;
+      font-size: .92rem;
+      color: var(--cinza);
+    }
+    .servico li::before {
+      content: "";
+      position: absolute;
+      left: 0; top: .72em;
+      width: 12px; height: 1px;
+      background: var(--oliva);
+    }
+
+    /* ================================================================
+       8. SOBRE
+       ================================================================ */
+    .sobre-grelha {
+      display: grid;
+      grid-template-columns: 5fr 6fr;
+      gap: clamp(2rem, 6vw, 5.5rem);
+      align-items: center;
+    }
+    @media (max-width: 900px) { .sobre-grelha { grid-template-columns: 1fr; } }
+
+    .sobre-figura {
+      position: relative;
+      padding: 0 1.6rem 1.6rem 0;
+    }
+    /* bloco de areia deslocado atrás da fotografia — composição assimétrica */
+    .sobre-figura::before {
+      content: "";
+      position: absolute;
+      top: 1.6rem; right: 0; bottom: 0; left: 1.6rem;
+      background: var(--areia);
+      border: 1px solid var(--linha);
+      border-radius: var(--raio);
+    }
+    .sobre-quadro { position: relative; aspect-ratio: 4 / 5; }
+
+    .sobre-nome {
+      font-size: clamp(1.9rem, 4vw, 2.7rem);
+      margin-bottom: .4rem;
+    }
+    .sobre-papel {
+      font-size: .74rem;
+      font-weight: 500;
+      letter-spacing: .34em;
+      text-transform: uppercase;
+      color: var(--oliva);
+      margin-bottom: 1.8rem;
+    }
+    .sobre-texto { color: var(--cinza); }
+    .sobre-fecho {
+      margin-top: 2.2rem;
+      padding-top: 1.8rem;
+      border-top: 1px solid var(--linha);
+    }
+    .sobre-fecho p {
+      font-family: var(--display);
+      font-size: 1.35rem;
+      margin-bottom: 1.4rem;
+    }
+
+    /* ================================================================
+       9. PROJETOS — filtros, grelha "masonry", cartões
+       ================================================================ */
+    .filtros {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem 1.8rem;
+      margin-bottom: 2.6rem;
+    }
+    .filtro {
+      background: none;
+      border: none;
+      padding: .45rem 0;
+      font-family: var(--corpo);
+      font-size: .78rem;
+      font-weight: 500;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--cinza);
+      border-bottom: 1px solid transparent;
+      cursor: pointer;
+      transition: color .25s ease, border-color .25s ease;
+    }
+    .filtro:hover { color: var(--oliva-2); }
+    .filtro[aria-pressed="true"] {
+      color: var(--carvao);
+      border-bottom-color: var(--oliva);
+    }
+
+    .projetos-grelha {
+      columns: 3 300px;
+      column-gap: 1.5rem;
+    }
+    @media (max-width: 640px) { .projetos-grelha { column-gap: 1.1rem; } }
+
+    .projeto {
+      break-inside: avoid;
+      margin-bottom: 1.5rem;
+      width: 100%;
+      display: block;
+      position: relative;
+      border: none;
+      background: none;
+      padding: 0;
+      cursor: pointer;
+      text-align: left;
+      font-family: var(--corpo);
+      border-radius: var(--raio);
+    }
+    @media (max-width: 640px) { .projeto { margin-bottom: 1.1rem; } }
+    .projeto.escondido { display: none; }
+
+    .projeto .quadro { width: 100%; }
+    .projeto img {
+      transition: transform .6s ease;
+    }
+    .projeto:hover img { transform: scale(1.035); }
+
+    /* véu com título/categoria ao passar o rato */
+    .projeto-veu {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      gap: .25rem;
+      padding: 1.4rem 1.5rem;
+      background: linear-gradient(to top, rgba(20,19,16,.68), rgba(20,19,16,0) 55%);
+      border-radius: var(--raio);
+      opacity: 0;
+      transition: opacity .35s ease;
+    }
+    .projeto:hover .projeto-veu,
+    .projeto:focus-visible .projeto-veu { opacity: 1; }
+    .projeto-veu strong {
+      font-family: var(--display);
+      font-weight: 400;
+      font-size: 1.18rem;
+      color: #fff;
+    }
+    .projeto-veu span {
+      font-size: .66rem;
+      font-weight: 500;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,.78);
+    }
+    /* em ecrãs táteis o véu fica sempre visível */
+    @media (hover: none) {
+      .projeto-veu { opacity: 1; }
+    }
+
+    .projetos-vazio {
+      display: none;
+      padding: 3.5rem 0;
+      text-align: center;
+      color: var(--cinza);
+      font-family: var(--display);
+      font-size: 1.2rem;
+    }
+    .projetos-vazio.visivel { display: block; }
+
+    /* ================================================================
+       10. DEPOIMENTOS
+       ================================================================ */
+    .depo-grelha {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .depoimento {
+      display: flex;
+      flex-direction: column;
+      padding: 2.2rem 2.1rem;
+      background: #fff;
+      border: 1px solid var(--linha);
+      border-radius: var(--raio);
+    }
+    .depoimento::before {
+      content: "\201C";
+      font-family: var(--display);
+      font-size: 3.4rem;
+      font-weight: 300;
+      line-height: .6;
+      color: var(--oliva);
+      margin-bottom: 1.1rem;
+    }
+    .depoimento blockquote p {
+      font-size: .98rem;
+      color: var(--cinza);
+      font-style: normal;
+    }
+    .depoimento footer {
+      margin-top: auto;
+      padding-top: 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: .9rem;
+      font-size: .78rem;
+      font-weight: 500;
+      letter-spacing: .22em;
+      text-transform: uppercase;
+      color: var(--carvao);
+    }
+    .depoimento footer::before {
+      content: "";
+      width: 26px; height: 1px;
+      background: var(--oliva);
+      flex: none;
+    }
+
+    /* ================================================================
+       11. CONTACTO / RODAPÉ
+       ================================================================ */
+    .contacto {
+      margin-top: 5.5rem;
+      background: var(--carvao);
+      color: var(--papel);
+      padding: 5.5rem 0 0;
+    }
+    .contacto-cota .cota-linha { background: rgba(247,245,240,.25); }
+    .contacto-cota .cota-linha::before,
+    .contacto-cota .cota-linha::after { background: var(--papel); }
+    .contacto-cota .cota-rotulo { color: rgba(247,245,240,.65); }
+    .contacto-cota { padding: 0 0 3rem; }
+
+    .contacto-titulo {
+      font-size: clamp(2.1rem, 5.4vw, 3.6rem);
+      font-weight: 300;
+      max-width: 15em;
+    }
+    .contacto-texto {
+      margin-top: 1.2rem;
+      max-width: 36em;
+      color: rgba(247,245,240,.72);
+    }
+    .contacto-acoes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-top: 2.4rem;
+    }
+
+    .redes {
+      display: flex;
+      gap: 1.2rem;
+      margin-top: 3.2rem;
+      list-style: none;
+    }
+    .redes a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 46px; height: 46px;
+      border: 1px solid rgba(247,245,240,.3);
+      border-radius: var(--raio);
+      color: var(--papel);
+      transition: border-color .25s ease, color .25s ease, background .25s ease;
+    }
+    .redes a:hover { border-color: var(--papel); background: rgba(247,245,240,.08); }
+    .redes svg { width: 19px; height: 19px; }
+
+    .rodape-base {
+      margin-top: 4rem;
+      border-top: 1px solid rgba(247,245,240,.16);
+      padding: 1.6rem 0 1.8rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .6rem 2rem;
+      justify-content: space-between;
+      font-size: .8rem;
+      color: rgba(247,245,240,.55);
+    }
+    .rodape-base .marca-mini {
+      font-family: var(--display);
+      letter-spacing: .3em;
+      color: rgba(247,245,240,.8);
+    }
+
+    /* ================================================================
+       12. LIGHTBOX (visualizador de galeria)
+       ================================================================ */
+    .lightbox {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      display: flex;
+      flex-direction: column;
+      background: rgba(23, 22, 18, .96);
+      color: var(--papel);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity .3s ease, visibility .3s ease;
+    }
+    .lightbox.aberto { opacity: 1; visibility: visible; }
+
+    .lb-topo {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 1.5rem;
+      padding: 1.4rem clamp(1.25rem, 4vw, 3rem);
+    }
+    .lb-titulo {
+      font-family: var(--display);
+      font-weight: 400;
+      font-size: clamp(1.15rem, 2.6vw, 1.6rem);
+    }
+    .lb-categoria {
+      display: block;
+      margin-top: .3rem;
+      font-family: var(--corpo);
+      font-size: .66rem;
+      font-weight: 500;
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      color: rgba(247,245,240,.6);
+    }
+    .lb-fechar {
+      flex: none;
+      width: 46px; height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: 1px solid rgba(247,245,240,.3);
+      border-radius: var(--raio);
+      color: var(--papel);
+      font-size: 1.15rem;
+      line-height: 1;
+      cursor: pointer;
+      transition: border-color .25s ease, background .25s ease;
+    }
+    .lb-fechar:hover { border-color: var(--papel); background: rgba(247,245,240,.08); }
+
+    .lb-palco {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: clamp(.75rem, 2.5vw, 2rem);
+      padding: 0 clamp(1.25rem, 4vw, 3rem);
+      min-height: 0;
+    }
+    .lb-moldura {
+      position: relative;
+      flex: 1;
+      height: 100%;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .lb-moldura img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+      border-radius: var(--raio);
+    }
+    /* placeholder do lightbox quando a imagem falta */
+    .lb-quadro {
+      display: none;
+      width: min(100%, 640px);
+      aspect-ratio: 4 / 3;
+      max-height: 100%;
+    }
+    .lb-moldura.sem-imagem .lb-quadro { display: block; }
+    .lb-moldura.sem-imagem > img { display: none; }
+    .lb-quadro .quadro { width: 100%; height: 100%; }
+    .lb-quadro .quadro-rotulo strong { color: var(--cinza); }
+
+    .lb-seta {
+      flex: none;
+      width: 46px; height: 46px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: 1px solid rgba(247,245,240,.3);
+      border-radius: var(--raio);
+      color: var(--papel);
+      cursor: pointer;
+      transition: border-color .25s ease, background .25s ease, opacity .25s ease;
+    }
+    .lb-seta:hover { border-color: var(--papel); background: rgba(247,245,240,.08); }
+    .lb-seta[disabled] { opacity: .25; cursor: default; }
+    .lb-seta svg { width: 18px; height: 18px; }
+
+    .lb-base {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      padding: 1.3rem clamp(1.25rem, 4vw, 3rem) 1.6rem;
+    }
+    .lb-contador {
+      font-size: .74rem;
+      font-weight: 500;
+      letter-spacing: .3em;
+      color: rgba(247,245,240,.6);
+    }
+    @media (max-width: 640px) {
+      .lb-base { flex-direction: column-reverse; align-items: stretch; text-align: center; }
+      .lb-base .botao { justify-content: center; }
+      .lb-contador { text-align: center; }
+    }
+
+    /* ================================================================
+       13. ANIMAÇÕES DE ENTRADA (subtis, respeitam reduced-motion)
+       ================================================================ */
+    .surgir {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity .7s ease, transform .7s ease;
+    }
+    .surgir.visivel {
+      opacity: 1;
+      transform: none;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .surgir {
+        opacity: 1;
+        transform: none;
+        transition: none;
+      }
+      .projeto img, .lightbox, .hero-veu { transition: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <a class="saltar" href="#inicio">Saltar para o conteúdo</a>
+
+  <!-- ================================================================
+       CABEÇALHO / NAVEGAÇÃO
+       ================================================================ -->
+  <header class="cabecalho" id="cabecalho">
+    <div class="contentor cabecalho-interior">
+      <a class="marca" href="#inicio" aria-label="Ferracuti — início">FERRACUTI</a>
+
+      <button class="hamburguer" id="hamburguer" aria-expanded="false" aria-controls="nav-principal" aria-label="Abrir menu">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav class="nav-principal" id="nav-principal" aria-label="Navegação principal">
+        <ul>
+          <li><a href="#inicio">Início</a></li>
+          <li><a href="#servicos">Serviços</a></li>
+          <li><a href="#sobre">Sobre</a></li>
+          <li><a href="#projetos">Projetos</a></li>
+          <li><a href="#contacto">Contacto</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="inicio">
+
+    <!-- ==============================================================
+         HERO
+         ============================================================== -->
+    <section class="hero" aria-label="Apresentação">
+      <img class="hero-foto" id="hero-foto" src="img/hero.jpg"
+           alt="Fotografia de um projeto de interiores do estúdio Ferracuti"
+           fetchpriority="high">
+      <div class="hero-veu" aria-hidden="true"></div>
+
+      <div class="hero-conteudo">
+        <p class="hero-antetitulo">Arquitetura e Design de Interiores</p>
+        <h1 class="hero-titulo">FERRACUTI</h1>
+        <p class="hero-tagline">Criamos espaços que contam histórias e trazem conforto e felicidade à vida das pessoas.</p>
+        <div class="hero-acoes">
+          <a class="botao botao-cheio" href="#" data-whatsapp>
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.87 9.87 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91A9.87 9.87 0 0 0 12.04 2Zm0 18.15a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24a8.2 8.2 0 0 1 8.24 8.24c0 4.55-3.7 8.24-8.25 8.24Zm4.52-6.16c-.25-.13-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.97-.14.16-.29.18-.54.06-.24-.13-1.04-.39-1.99-1.23a7.5 7.5 0 0 1-1.38-1.72c-.14-.24-.01-.38.11-.5.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.13-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.42h-.48c-.16 0-.43.06-.66.31-.22.24-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.13.17 1.75 2.67 4.23 3.74.6.26 1.06.41 1.42.53.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.16-.48-.29Z"/></svg>
+            Pedir orçamento
+          </a>
+          <a class="botao botao-adaptavel" href="#projetos">Ver projetos</a>
+        </div>
+      </div>
+
+      <p class="hero-indicador" aria-hidden="true">Deslize</p>
+    </section>
+
+    <!-- ==============================================================
+         SERVIÇOS (conteúdo estático — não muda)
+         ============================================================== -->
+    <div class="contentor">
+      <div class="cota" role="presentation" aria-hidden="true">
+        <span class="cota-linha"></span>
+        <span class="cota-rotulo">01 · Serviços</span>
+        <span class="cota-linha"></span>
+      </div>
+    </div>
+
+    <section id="servicos" aria-labelledby="servicos-titulo">
+      <div class="contentor">
+        <header class="sec-cabeca surgir">
+          <h2 class="sec-titulo" id="servicos-titulo">Do conceito ao último detalhe</h2>
+          <p class="sec-texto">Cada projeto é acompanhado de perto, do primeiro esboço à entrega final, com o mesmo rigor e a mesma atenção ao detalhe.</p>
+        </header>
+
+        <div class="servicos-grelha">
+          <article class="servico surgir">
+            <p class="servico-numero">01</p>
+            <h3>Projetos Completos de Interiores</h3>
+            <p>Layout e design pensados para maximizar o espaço e a funcionalidade de cada ambiente.</p>
+            <ul>
+              <li>Seleção de materiais de alta qualidade — revestimentos, pisos e iluminação</li>
+              <li>Design de mobiliário à medida</li>
+              <li>Escolha de cores e texturas</li>
+              <li>Acompanhamento de obra</li>
+            </ul>
+          </article>
+
+          <article class="servico surgir">
+            <p class="servico-numero">02</p>
+            <h3>Consultoria de Decoração</h3>
+            <p>Orientação especializada para transformar o seu espaço sem obras profundas.</p>
+            <ul>
+              <li>Escolha de cores</li>
+              <li>Seleção de móveis e acessórios — tapetes, cortinas e iluminação</li>
+              <li>Reorganização de layout</li>
+            </ul>
+          </article>
+
+          <article class="servico surgir">
+            <p class="servico-numero">03</p>
+            <h3>Acompanhamento de Obra</h3>
+            <p>Presença próxima durante toda a execução, para que o resultado seja fiel ao projeto.</p>
+            <ul>
+              <li>Visitas a lojas e fornecedores</li>
+              <li>Supervisão regular face ao projeto e aos padrões de qualidade</li>
+              <li>Resolução de imprevistos</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         SOBRE (foto e texto vêm de conteudo.js)
+         ============================================================== -->
+    <div class="contentor">
+      <div class="cota" role="presentation" aria-hidden="true">
+        <span class="cota-linha"></span>
+        <span class="cota-rotulo">02 · Sobre</span>
+        <span class="cota-linha"></span>
+      </div>
+    </div>
+
+    <section id="sobre" aria-labelledby="sobre-nome">
+      <div class="contentor sobre-grelha">
+        <div class="sobre-figura surgir">
+          <div class="quadro sobre-quadro">
+            <div class="quadro-rotulo" aria-hidden="true">
+              <strong>Sandra Ferracuti</strong>
+              <span>Fotografia a fornecer</span>
+            </div>
+            <img id="sobre-foto" alt="Retrato da arquiteta Sandra Ferracuti" loading="lazy">
+          </div>
+        </div>
+
+        <div class="surgir">
+          <h2 class="sobre-nome" id="sobre-nome">Sandra Ferracuti</h2>
+          <p class="sobre-papel">Arquiteta · Fundadora</p>
+          <p class="sobre-texto" id="sobre-texto"><!-- texto injetado de conteudo.js --></p>
+          <div class="sobre-fecho">
+            <p>Vamos dar vida ao ambiente dos seus sonhos?</p>
+            <a class="botao botao-cheio" href="#" data-whatsapp>
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.87 9.87 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91A9.87 9.87 0 0 0 12.04 2Zm0 18.15a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24a8.2 8.2 0 0 1 8.24 8.24c0 4.55-3.7 8.24-8.25 8.24Zm4.52-6.16c-.25-.13-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.97-.14.16-.29.18-.54.06-.24-.13-1.04-.39-1.99-1.23a7.5 7.5 0 0 1-1.38-1.72c-.14-.24-.01-.38.11-.5.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.13-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.42h-.48c-.16 0-.43.06-.66.31-.22.24-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.13.17 1.75 2.67 4.23 3.74.6.26 1.06.41 1.42.53.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.16-.48-.29Z"/></svg>
+              Falar com a Sandra
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         PROJETOS (grelha renderizada a partir de conteudo.js)
+         ============================================================== -->
+    <div class="contentor">
+      <div class="cota" role="presentation" aria-hidden="true">
+        <span class="cota-linha"></span>
+        <span class="cota-rotulo">03 · Projetos</span>
+        <span class="cota-linha"></span>
+      </div>
+    </div>
+
+    <section id="projetos" aria-labelledby="projetos-titulo">
+      <div class="contentor">
+        <header class="sec-cabeca surgir">
+          <h2 class="sec-titulo" id="projetos-titulo">Projetos selecionados</h2>
+          <p class="sec-texto">Espaços residenciais e comerciais, pensados ao milímetro para quem os vive todos os dias.</p>
+        </header>
+
+        <div class="filtros surgir" role="group" aria-label="Filtrar projetos por categoria">
+          <button class="filtro" type="button" data-filtro="todos" aria-pressed="true">Todos</button>
+          <button class="filtro" type="button" data-filtro="residencial" aria-pressed="false">Residencial</button>
+          <button class="filtro" type="button" data-filtro="comercial" aria-pressed="false">Comercial</button>
+          <button class="filtro" type="button" data-filtro="3d" aria-pressed="false">Projetos 3D</button>
+        </div>
+
+        <div class="projetos-grelha" id="projetos-grelha"><!-- cartões injetados de conteudo.js --></div>
+        <p class="projetos-vazio" id="projetos-vazio">Novos projetos nesta categoria em breve.</p>
+      </div>
+    </section>
+
+    <!-- ==============================================================
+         DEPOIMENTOS (renderizados a partir de conteudo.js)
+         ============================================================== -->
+    <div class="contentor">
+      <div class="cota" role="presentation" aria-hidden="true">
+        <span class="cota-linha"></span>
+        <span class="cota-rotulo">04 · Depoimentos</span>
+        <span class="cota-linha"></span>
+      </div>
+    </div>
+
+    <section id="depoimentos" aria-labelledby="depoimentos-titulo">
+      <div class="contentor">
+        <header class="sec-cabeca surgir">
+          <h2 class="sec-titulo" id="depoimentos-titulo">O que dizem os clientes</h2>
+        </header>
+        <div class="depo-grelha" id="depo-grelha"><!-- depoimentos injetados de conteudo.js --></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ==============================================================
+       CONTACTO / RODAPÉ (ligações vêm de conteudo.js)
+       ============================================================== -->
+  <footer class="contacto" id="contacto" aria-labelledby="contacto-titulo">
+    <div class="contentor">
+      <div class="cota contacto-cota" role="presentation" aria-hidden="true">
+        <span class="cota-linha"></span>
+        <span class="cota-rotulo">05 · Contacto</span>
+        <span class="cota-linha"></span>
+      </div>
+
+      <h2 class="contacto-titulo surgir">O próximo espaço com história pode ser o seu.</h2>
+      <p class="contacto-texto surgir">Conte-nos o que imagina — respondemos com ideias, prazos e um caminho claro para transformar o seu ambiente.</p>
+
+      <div class="contacto-acoes surgir">
+        <a class="botao botao-cheio" href="#" data-whatsapp>
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.87 9.87 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91A9.87 9.87 0 0 0 12.04 2Zm0 18.15a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24a8.2 8.2 0 0 1 8.24 8.24c0 4.55-3.7 8.24-8.25 8.24Zm4.52-6.16c-.25-.13-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.97-.14.16-.29.18-.54.06-.24-.13-1.04-.39-1.99-1.23a7.5 7.5 0 0 1-1.38-1.72c-.14-.24-.01-.38.11-.5.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.13-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.42h-.48c-.16 0-.43.06-.66.31-.22.24-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.13.17 1.75 2.67 4.23 3.74.6.26 1.06.41 1.42.53.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.16-.48-.29Z"/></svg>
+          Pedir orçamento pelo WhatsApp
+        </a>
+      </div>
+
+      <ul class="redes" aria-label="Redes sociais">
+        <li>
+          <a id="rede-instagram" href="#" target="_blank" rel="noopener" aria-label="Instagram da Ferracuti">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4.5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none"/></svg>
+          </a>
+        </li>
+        <li>
+          <a id="rede-facebook" href="#" target="_blank" rel="noopener" aria-label="Facebook da Ferracuti">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 21v-7h2.4l.4-3h-2.8V9.1c0-.9.3-1.5 1.6-1.5H16.4V5c-.3 0-1.2-.1-2.2-.1-2.2 0-3.7 1.3-3.7 3.8V11H8v3h2.5v7h3Z"/></svg>
+          </a>
+        </li>
+        <li>
+          <a id="rede-linkedin" href="#" target="_blank" rel="noopener" aria-label="LinkedIn de Sandra Ferracuti">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.5 8.8H3.6V21h2.9V8.8ZM5 7.4a1.7 1.7 0 1 0 0-3.4 1.7 1.7 0 0 0 0 3.4ZM20.5 14.3c0-3.2-1.7-4.7-4-4.7-1.8 0-2.7 1-3.1 1.7V8.8h-2.9V21h2.9v-6.5c0-1.3.6-2.6 2.1-2.6s2.1 1.3 2.1 2.6V21h2.9v-6.7Z"/></svg>
+          </a>
+        </li>
+      </ul>
+
+      <div class="rodape-base">
+        <span class="marca-mini">FERRACUTI</span>
+        <span>© 2026 Ferracuti — Todos os direitos reservados.</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ==============================================================
+       LIGHTBOX — visualizador da galeria de cada projeto
+       ============================================================== -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-labelledby="lb-titulo" hidden>
+    <div class="lb-topo">
+      <div>
+        <h3 class="lb-titulo" id="lb-titulo"></h3>
+        <span class="lb-categoria" id="lb-categoria"></span>
+      </div>
+      <button class="lb-fechar" id="lb-fechar" type="button" aria-label="Fechar galeria">✕</button>
+    </div>
+
+    <div class="lb-palco">
+      <button class="lb-seta" id="lb-anterior" type="button" aria-label="Imagem anterior">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+
+      <div class="lb-moldura" id="lb-moldura">
+        <img id="lb-imagem" alt="">
+        <div class="lb-quadro" aria-hidden="true">
+          <div class="quadro">
+            <div class="quadro-rotulo">
+              <strong id="lb-quadro-titulo"></strong>
+              <span>Fotografia a fornecer</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button class="lb-seta" id="lb-seguinte" type="button" aria-label="Imagem seguinte">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+
+    <div class="lb-base">
+      <span class="lb-contador" id="lb-contador" aria-live="polite"></span>
+      <a class="botao botao-cheio" id="lb-whatsapp" href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.87 9.87 0 0 0 4.79 1.22h.01c5.46 0 9.9-4.45 9.9-9.91A9.87 9.87 0 0 0 12.04 2Zm0 18.15a8.2 8.2 0 0 1-4.19-1.15l-.3-.18-3.12.82.83-3.04-.2-.31a8.2 8.2 0 0 1-1.26-4.38c0-4.54 3.7-8.24 8.25-8.24a8.2 8.2 0 0 1 8.24 8.24c0 4.55-3.7 8.24-8.25 8.24Zm4.52-6.16c-.25-.13-1.47-.72-1.69-.81-.23-.08-.39-.12-.56.13-.16.24-.64.8-.78.97-.14.16-.29.18-.54.06-.24-.13-1.04-.39-1.99-1.23a7.5 7.5 0 0 1-1.38-1.72c-.14-.24-.01-.38.11-.5.11-.11.25-.29.37-.43.12-.14.16-.25.25-.41.08-.17.04-.31-.02-.43-.06-.13-.56-1.34-.76-1.84-.2-.48-.4-.42-.56-.42h-.48c-.16 0-.43.06-.66.31-.22.24-.86.85-.86 2.07 0 1.22.89 2.4 1.01 2.56.13.17 1.75 2.67 4.23 3.74.6.26 1.06.41 1.42.53.6.19 1.14.16 1.57.1.48-.07 1.47-.6 1.67-1.18.21-.58.21-1.07.15-1.18-.06-.1-.23-.16-.48-.29Z"/></svg>
+        Pedir orçamento para este projeto
+      </a>
+    </div>
+  </div>
+
+  <!-- Conteúdo editável — ver instruções no topo do ficheiro -->
+  <script src="conteudo.js"></script>
+
+  <script>
+    /* ==================================================================
+       VIEIRINHA040726 — lógica de interface
+       Lê o objeto global CONTEUDO (conteudo.js) e renderiza as secções
+       dinâmicas: sobre, projetos, depoimentos, contactos e WhatsApp.
+       ================================================================== */
+    (function () {
+      "use strict";
+
+      const NOMES_CATEGORIA = {
+        residencial: "Residencial",
+        comercial: "Comercial",
+        "3d": "Projeto 3D"
+      };
+
+      /* proteção básica ao injetar texto vindo de conteudo.js */
+      function esc(texto) {
+        const div = document.createElement("div");
+        div.textContent = String(texto == null ? "" : texto);
+        return div.innerHTML;
+      }
+
+      function urlWhatsapp(mensagem) {
+        return "https://wa.me/" + CONTEUDO.whatsapp +
+               "?text=" + encodeURIComponent(mensagem);
+      }
+
+      /* --------------------------------------------------------------
+         Imagens em falta → placeholder elegante (nunca imagem partida)
+         -------------------------------------------------------------- */
+      function comFallback(img, aoFalhar) {
+        function falhar() {
+          img.classList.add("falhou");
+          if (aoFalhar) aoFalhar();
+        }
+        img.addEventListener("error", falhar);
+        /* a imagem pode já ter falhado antes de o script correr */
+        if (img.complete && img.naturalWidth === 0 && img.getAttribute("src")) {
+          falhar();
+        }
+      }
+
+      /* --------------------------------------------------------------
+         CABEÇALHO — fundo ao rolar + menu hambúrguer
+         -------------------------------------------------------------- */
+      const cabecalho = document.getElementById("cabecalho");
+      function aoRolar() {
+        cabecalho.classList.toggle("solido", window.scrollY > 40);
+      }
+      window.addEventListener("scroll", aoRolar, { passive: true });
+      aoRolar();
+
+      const hamburguer = document.getElementById("hamburguer");
+      const navPrincipal = document.getElementById("nav-principal");
+      function alternarMenu(forcarFechar) {
+        const abrir = forcarFechar ? false : hamburguer.getAttribute("aria-expanded") !== "true";
+        hamburguer.setAttribute("aria-expanded", String(abrir));
+        hamburguer.setAttribute("aria-label", abrir ? "Fechar menu" : "Abrir menu");
+        navPrincipal.classList.toggle("aberto", abrir);
+        document.body.classList.toggle("menu-aberto", abrir);
+      }
+      hamburguer.addEventListener("click", function () { alternarMenu(); });
+      navPrincipal.addEventListener("click", function (ev) {
+        if (ev.target.closest("a")) alternarMenu(true);
+      });
+      document.addEventListener("keydown", function (ev) {
+        if (ev.key === "Escape" && document.body.classList.contains("menu-aberto")) {
+          alternarMenu(true);
+          hamburguer.focus();
+        }
+      });
+
+      /* --------------------------------------------------------------
+         HERO — se a fotografia existir, muda o tema do topo
+         -------------------------------------------------------------- */
+      const heroFoto = document.getElementById("hero-foto");
+      heroFoto.addEventListener("load", function () {
+        document.body.classList.add("hero-com-foto");
+      });
+      comFallback(heroFoto, function () {
+        document.body.classList.remove("hero-com-foto");
+      });
+      if (heroFoto.complete && heroFoto.naturalWidth > 0) {
+        document.body.classList.add("hero-com-foto");
+      }
+
+      /* --------------------------------------------------------------
+         CTAs de WhatsApp genéricos (hero, sobre, contacto)
+         -------------------------------------------------------------- */
+      document.querySelectorAll("[data-whatsapp]").forEach(function (a) {
+        a.href = urlWhatsapp(CONTEUDO.mensagemWhatsapp);
+        a.target = "_blank";
+        a.rel = "noopener";
+      });
+
+      /* --------------------------------------------------------------
+         SOBRE
+         -------------------------------------------------------------- */
+      const sobreFoto = document.getElementById("sobre-foto");
+      sobreFoto.src = CONTEUDO.sobre.foto;
+      comFallback(sobreFoto);
+      document.getElementById("sobre-texto").textContent = CONTEUDO.sobre.texto;
+
+      /* --------------------------------------------------------------
+         PROJETOS — grelha, filtros e lightbox
+         -------------------------------------------------------------- */
+      const grelha = document.getElementById("projetos-grelha");
+      const avisoVazio = document.getElementById("projetos-vazio");
+
+      /* proporções alternadas para uma grelha editorial (masonry);
+         projetos em destaque recebem uma célula mais alta */
+      const PROPORCOES = ["4 / 5", "1 / 1", "3 / 4", "4 / 5", "3 / 4", "1 / 1"];
+
+      CONTEUDO.projetos.forEach(function (projeto, i) {
+        const cartao = document.createElement("button");
+        cartao.type = "button";
+        cartao.className = "projeto surgir";
+        cartao.dataset.categoria = projeto.categoria;
+        cartao.setAttribute("aria-label",
+          "Abrir galeria do projeto " + projeto.titulo + " (" +
+          (NOMES_CATEGORIA[projeto.categoria] || projeto.categoria) + ")");
+
+        const proporcao = projeto.destaque ? "3 / 4" : PROPORCOES[i % PROPORCOES.length];
+
+        cartao.innerHTML =
+          '<span class="quadro" style="aspect-ratio:' + proporcao + '">' +
+            '<span class="quadro-rotulo" aria-hidden="true">' +
+              "<strong>" + esc(projeto.titulo) + "</strong>" +
+              "<span>Fotografia a fornecer</span>" +
+            "</span>" +
+          "</span>" +
+          '<span class="projeto-veu" aria-hidden="true">' +
+            "<strong>" + esc(projeto.titulo) + "</strong>" +
+            "<span>" + esc(NOMES_CATEGORIA[projeto.categoria] || projeto.categoria) + "</span>" +
+          "</span>";
+
+        const img = document.createElement("img");
+        img.src = projeto.capa;
+        img.loading = "lazy";
+        img.alt = "Projeto " + projeto.titulo + " — fotografia principal, Ferracuti Arquitetura";
+        comFallback(img);
+        cartao.querySelector(".quadro").appendChild(img);
+
+        cartao.addEventListener("click", function () { abrirLightbox(projeto, cartao); });
+        grelha.appendChild(cartao);
+      });
+
+      /* filtros por categoria */
+      const filtros = document.querySelectorAll(".filtro");
+      filtros.forEach(function (botao) {
+        botao.addEventListener("click", function () {
+          filtros.forEach(function (b) {
+            b.setAttribute("aria-pressed", String(b === botao));
+          });
+          const alvo = botao.dataset.filtro;
+          let visiveis = 0;
+          grelha.querySelectorAll(".projeto").forEach(function (cartao) {
+            const mostrar = alvo === "todos" || cartao.dataset.categoria === alvo;
+            cartao.classList.toggle("escondido", !mostrar);
+            if (mostrar) visiveis++;
+          });
+          avisoVazio.classList.toggle("visivel", visiveis === 0);
+        });
+      });
+
+      /* ---- lightbox ---- */
+      const lightbox   = document.getElementById("lightbox");
+      const lbTitulo   = document.getElementById("lb-titulo");
+      const lbCategoria = document.getElementById("lb-categoria");
+      const lbImagem   = document.getElementById("lb-imagem");
+      const lbMoldura  = document.getElementById("lb-moldura");
+      const lbQuadroTitulo = document.getElementById("lb-quadro-titulo");
+      const lbContador = document.getElementById("lb-contador");
+      const lbAnterior = document.getElementById("lb-anterior");
+      const lbSeguinte = document.getElementById("lb-seguinte");
+      const lbFechar   = document.getElementById("lb-fechar");
+      const lbWhatsapp = document.getElementById("lb-whatsapp");
+
+      let galeriaAtual = [];
+      let projetoAtual = null;
+      let indiceAtual = 0;
+      let elementoOrigem = null; /* para devolver o foco ao fechar */
+
+      function mostrarImagem() {
+        const total = galeriaAtual.length;
+        lbMoldura.classList.remove("sem-imagem");
+        lbImagem.classList.remove("falhou");
+        lbImagem.src = galeriaAtual[indiceAtual];
+        lbImagem.alt = "Projeto " + projetoAtual.titulo + " — fotografia " +
+                       (indiceAtual + 1) + " de " + total + ", Ferracuti Arquitetura";
+        lbContador.textContent = (indiceAtual + 1) + " / " + total;
+        lbAnterior.disabled = indiceAtual === 0;
+        lbSeguinte.disabled = indiceAtual === total - 1;
+      }
+      lbImagem.addEventListener("error", function () {
+        lbMoldura.classList.add("sem-imagem");
+      });
+
+      function abrirLightbox(projeto, origem) {
+        projetoAtual = projeto;
+        galeriaAtual = [projeto.capa].concat(projeto.galeria || []);
+        indiceAtual = 0;
+        elementoOrigem = origem;
+
+        lbTitulo.textContent = projeto.titulo;
+        lbCategoria.textContent = NOMES_CATEGORIA[projeto.categoria] || projeto.categoria;
+        lbQuadroTitulo.textContent = projeto.titulo;
+        lbWhatsapp.href = urlWhatsapp(
+          'Olá! Vi o projeto "' + projeto.titulo + '" no vosso site e gostaria de saber mais.');
+
+        mostrarImagem();
+        lightbox.hidden = false;
+        requestAnimationFrame(function () { lightbox.classList.add("aberto"); });
+        document.body.style.overflow = "hidden";
+        lbFechar.focus();
+      }
+
+      function fecharLightbox() {
+        lightbox.classList.remove("aberto");
+        document.body.style.overflow = "";
+        window.setTimeout(function () { lightbox.hidden = true; }, 300);
+        if (elementoOrigem) elementoOrigem.focus();
+      }
+
+      function navegar(passo) {
+        const novo = indiceAtual + passo;
+        if (novo < 0 || novo >= galeriaAtual.length) return;
+        indiceAtual = novo;
+        mostrarImagem();
+      }
+
+      lbFechar.addEventListener("click", fecharLightbox);
+      lbAnterior.addEventListener("click", function () { navegar(-1); });
+      lbSeguinte.addEventListener("click", function () { navegar(1); });
+
+      /* fecho por clique fora da imagem */
+      lightbox.addEventListener("click", function (ev) {
+        if (ev.target === lightbox ||
+            ev.target.classList.contains("lb-palco") ||
+            ev.target.classList.contains("lb-moldura")) {
+          fecharLightbox();
+        }
+      });
+
+      /* teclado: Esc fecha, setas navegam, Tab fica dentro do diálogo */
+      document.addEventListener("keydown", function (ev) {
+        if (lightbox.hidden) return;
+        if (ev.key === "Escape") { fecharLightbox(); return; }
+        if (ev.key === "ArrowLeft") { navegar(-1); return; }
+        if (ev.key === "ArrowRight") { navegar(1); return; }
+        if (ev.key === "Tab") {
+          const focaveis = lightbox.querySelectorAll("button:not([disabled]), a[href]");
+          const primeiro = focaveis[0];
+          const ultimo = focaveis[focaveis.length - 1];
+          if (ev.shiftKey && document.activeElement === primeiro) {
+            ev.preventDefault(); ultimo.focus();
+          } else if (!ev.shiftKey && document.activeElement === ultimo) {
+            ev.preventDefault(); primeiro.focus();
+          }
+        }
+      });
+
+      /* --------------------------------------------------------------
+         DEPOIMENTOS
+         -------------------------------------------------------------- */
+      const depoGrelha = document.getElementById("depo-grelha");
+      CONTEUDO.depoimentos.forEach(function (dep) {
+        const artigo = document.createElement("article");
+        artigo.className = "depoimento surgir";
+        artigo.innerHTML =
+          "<blockquote><p>" + esc(dep.texto) + "</p></blockquote>" +
+          "<footer>" + esc(dep.autor) + "</footer>";
+        depoGrelha.appendChild(artigo);
+      });
+
+      /* --------------------------------------------------------------
+         REDES SOCIAIS (rodapé)
+         -------------------------------------------------------------- */
+      document.getElementById("rede-instagram").href = CONTEUDO.redes.instagram;
+      document.getElementById("rede-facebook").href = CONTEUDO.redes.facebook;
+      document.getElementById("rede-linkedin").href = CONTEUDO.redes.linkedin;
+
+      /* --------------------------------------------------------------
+         ANIMAÇÕES DE ENTRADA — IntersectionObserver
+         (o CSS já as desativa com prefers-reduced-motion)
+         -------------------------------------------------------------- */
+      const observador = new IntersectionObserver(function (entradas) {
+        entradas.forEach(function (entrada) {
+          if (entrada.isIntersecting) {
+            entrada.target.classList.add("visivel");
+            observador.unobserve(entrada.target);
+          }
+        });
+      }, { threshold: 0.12, rootMargin: "0px 0px -5% 0px" });
+      document.querySelectorAll(".surgir").forEach(function (el) {
+        observador.observe(el);
+      });
+
+      /* --------------------------------------------------------------
+         SEO — JSON-LD LocalBusiness gerado a partir de conteudo.js
+         -------------------------------------------------------------- */
+      const jsonLd = {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "Ferracuti — Arquitetura e Design de Interiores",
+        "description": "Criamos espaços que contam histórias e trazem conforto e felicidade à vida das pessoas.",
+        "image": "img/og-image.jpg",
+        "telephone": "+" + CONTEUDO.whatsapp,
+        "founder": {
+          "@type": "Person",
+          "name": "Sandra Ferracuti",
+          "jobTitle": "Arquiteta"
+        },
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "PT"
+        },
+        "sameAs": [
+          CONTEUDO.redes.instagram,
+          CONTEUDO.redes.facebook,
+          CONTEUDO.redes.linkedin
+        ]
+      };
+      const scriptLd = document.createElement("script");
+      scriptLd.type = "application/ld+json";
+      scriptLd.textContent = JSON.stringify(jsonLd);
+      document.head.appendChild(scriptLd);
+    })();
+  </script>
+</body>
+</html>

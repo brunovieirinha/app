@@ -1,0 +1,69 @@
+FERRACUTI — LISTA DE IMAGENS A FORNECER
+=======================================
+
+Enquanto uma imagem não existir, o site mostra automaticamente um
+placeholder elegante — nunca aparece uma imagem partida.
+Basta copiar os ficheiros para as pastas certas, com estes nomes exatos
+(minúsculas, sem espaços nem acentos), e o site passa a usá-los.
+
+Formato recomendado: JPG, qualidade 80–85, máx. ~300 KB por imagem.
+
+
+NESTA PASTA (img/)
+------------------
+hero.jpg          → fotografia de abertura do site (o melhor projeto)
+                    Proporção: horizontal 16:9 ou mais larga
+                    Tamanho recomendado: 2000 × 1250 px
+
+sandra.jpg        → retrato da Arq. Sandra Ferracuti (secção "Sobre")
+                    Proporção: vertical 4:5
+                    Tamanho recomendado: 1000 × 1250 px
+
+og-image.jpg      → imagem de partilha (WhatsApp / redes sociais)
+                    Proporção: 1200 × 630 px (obrigatório este formato)
+
+
+NA PASTA img/projetos/
+----------------------
+Proporção livre (a grelha adapta-se); recomenda-se 1400 px no lado maior.
+
+Ginásio — Canidelo:
+  ginasio-canidelo-1.jpg   (capa)
+  ginasio-canidelo-2.jpg
+  ginasio-canidelo-3.jpg
+  ginasio-canidelo-4.jpg
+
+Ginásio — Afurada:
+  ginasio-afurada-1.jpg    (capa)
+  ginasio-afurada-2.jpg
+  ginasio-afurada-3.jpg
+
+Painel de TV:
+  painel-tv-1.jpg          (capa)
+  painel-tv-2.jpg
+
+Quarto de Bebé:
+  quarto-bebe-1.jpg        (capa)
+  quarto-bebe-2.jpg
+  quarto-bebe-3.jpg
+
+Quarto de Solteiro:
+  quarto-solteiro-1.jpg    (capa)
+  quarto-solteiro-2.jpg
+
+Sala de Reuniões:
+  sala-reunioes-1.jpg      (capa)
+  sala-reunioes-2.jpg
+
+Receção e Sala de Espera — Clínica:
+  clinica-rececao-1.jpg    (capa)
+  clinica-rececao-2.jpg
+  clinica-rececao-3.jpg
+
+Receção e Sala de Espera — Gabinete Jurídico:
+  gabinete-juridico-1.jpg  (capa)
+  gabinete-juridico-2.jpg
+
+NOTA: se um projeto tiver mais ou menos fotografias do que as listadas,
+basta ajustar a lista "galeria" desse projeto em conteudo.js
+(instruções no topo desse ficheiro).
