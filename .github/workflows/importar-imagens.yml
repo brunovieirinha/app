@@ -1,7 +1,7 @@
 # VIEIRINHA040726 — workflow temporário para importar as fotografias do
 # Media Manager do Wix (static.wixstatic.com) para o repositório, porque
 # o ambiente de desenvolvimento não tem acesso de rede a esse domínio.
-# Pode ser removido depois de as imagens estarem no repositório.
+# Fase 2: hero a cores. Pode ser removido depois de as imagens estarem no repositório.
 name: Importar imagens do Wix
 
 on:
@@ -20,57 +20,19 @@ jobs:
       - name: Descarregar imagens
         run: |
           set -euo pipefail
-          if [ -f ferracuti-site/img/projetos/ginasio-canidelo-1.jpg ]; then
-            echo "Imagens já importadas — nada a fazer."
+          if [ -f ferracuti-site/img/hero.jpg ]; then
+            echo "Hero já importado — nada a fazer."
             exit 0
           fi
-          mkdir -p ferracuti-site/img/projetos ferracuti-site/img/_candidatas
-          baixar() { # destino, media-id, largura
+          baixar() {
             curl -fsSL --retry 3 -o "$1" \
               "https://static.wixstatic.com/media/$2/v1/fit/w_$3,h_$3,q_82/foto.jpg"
           }
-          # Ginásio — Canidelo
-          baixar ferracuti-site/img/projetos/ginasio-canidelo-1.jpg "ccb978_155afd710165478184d084e72c8aaeee~mv2.jpg" 1400
-          baixar ferracuti-site/img/projetos/ginasio-canidelo-2.jpg "ccb978_e99a77bcfbe34422861c379cfbd724bc~mv2.jpg" 1400
-          baixar ferracuti-site/img/projetos/ginasio-canidelo-3.jpg "ccb978_dfd39a3166c74ba284221551b7917672~mv2.jpg" 1400
-          baixar ferracuti-site/img/projetos/ginasio-canidelo-4.jpg "ccb978_65da418827a94607b22dd15021b9d48a~mv2.jpg" 1400
-          baixar ferracuti-site/img/projetos/ginasio-canidelo-5.jpg "ccb978_c03bb28d6da84ad38f2d75363a7b5c5d~mv2.jpg" 1400
-          baixar ferracuti-site/img/projetos/ginasio-canidelo-6.jpg "ccb978_72b8b8df09e54d9f8b300db0e36ce90c~mv2.jpg" 1400
-          # Ginásio — Afurada
-          baixar ferracuti-site/img/projetos/ginasio-afurada-1.jpg "ccb978_0c8736c3aa624085abefa14b55e9ed75~mv2.jpg" 1400
-          baixar ferracuti-site/img/projetos/ginasio-afurada-2.jpg "ccb978_6cf9c22b915749feb36eba36e827aeab~mv2.jpg" 1400
-          baixar ferracuti-site/img/projetos/ginasio-afurada-3.jpg "ccb978_9b132843037446e196b38b90ca978b46~mv2.jpg" 1400
-          baixar ferracuti-site/img/projetos/ginasio-afurada-4.jpg "ccb978_ad275b5566174b8d8c014b097f23c411~mv2.jpg" 1400
-          baixar ferracuti-site/img/projetos/ginasio-afurada-5.jpg "ccb978_303352b034a34c93a4dcaf075113c45a~mv2.jpg" 1400
-          baixar ferracuti-site/img/projetos/ginasio-afurada-6.jpg "ccb978_64d5bbd36096408aa2b6202bff38e012~mv2.jpg" 1400
-          # Quarto de Bebé
-          baixar ferracuti-site/img/projetos/quarto-bebe-1.jpg "ccb978_46034227e2424c2b9f15041f07f46b09~mv2.jpg" 1400
-          baixar ferracuti-site/img/projetos/quarto-bebe-2.jpg "ccb978_399ca2ea58b747c991875b2fa8dc6111~mv2.jpg" 1400
-          baixar ferracuti-site/img/projetos/quarto-bebe-3.jpg "ccb978_7b592e361a8e43c7b6cc0bf20aca9ca1~mv2.jpg" 1400
-          baixar ferracuti-site/img/projetos/quarto-bebe-4.jpg "ccb978_7a31d0e0a74b4219aa6b48a0ada443d0~mv2.jpg" 1400
-          baixar ferracuti-site/img/projetos/quarto-bebe-5.jpg "ccb978_70cab878268c480baa5ea778bef06970~mv2.jpg" 1400
-          # Quarto de Solteiro (quarto adolescente)
-          baixar ferracuti-site/img/projetos/quarto-solteiro-1.jpg "ccb978_984b8dcaa4ba43f8a7912c0dd5739618~mv2.jpg" 1400
-          baixar ferracuti-site/img/projetos/quarto-solteiro-2.jpg "ccb978_2ca292a6cb8c48beb3e2c24eeab9d116~mv2.jpg" 1400
-          baixar ferracuti-site/img/projetos/quarto-solteiro-3.jpg "ccb978_10142f663810407493373ae522260a1e~mv2.jpg" 1400
-          # Sala de Reuniões
-          baixar ferracuti-site/img/projetos/sala-reunioes-1.jpg "ccb978_85cb8026d9c748acb1e7ad56f2f677ca~mv2.jpg" 1400
-          baixar ferracuti-site/img/projetos/sala-reunioes-2.jpg "ccb978_218b6c206d6047d7ab1b0ea0e6768b32~mv2.jpg" 1400
-          baixar ferracuti-site/img/projetos/sala-reunioes-3.jpg "ccb978_78df413fc98340b79b16f5e4da0d061d~mv2.jpg" 1400
-          baixar ferracuti-site/img/projetos/sala-reunioes-4.jpg "ccb978_23de00ea43fa4fa4b81746aafecaa700~mv2.jpg" 1400
-          # Receção e Sala de Espera — Clínica
-          baixar ferracuti-site/img/projetos/clinica-rececao-1.jpg "ccb978_b0e93eb9cb284fbc9c33fedab3827bc7~mv2.jpg" 1400
-          baixar ferracuti-site/img/projetos/clinica-rececao-2.jpg "ccb978_0547e42e915c466396de2a4dce04c45b~mv2.jpg" 1400
-          baixar ferracuti-site/img/projetos/clinica-rececao-3.jpg "ccb978_bcbfe326ef03474cb3ceee463fe4d9d5~mv2.jpg" 1400
-          baixar ferracuti-site/img/projetos/clinica-rececao-4.jpg "ccb978_6dd9034831cd4ab88906e59e9933107a~mv2.jpg" 1400
-          # Candidatas a hero e retrato (escolha visual posterior)
-          baixar ferracuti-site/img/_candidatas/hero-a.jpg "ccb978_f0bddd060a7449c3b5e5a852420a7dd5~mv2.jpg" 2000
-          baixar ferracuti-site/img/_candidatas/hero-b.jpg "ccb978_afce35bad9674826b57f766d15a1af42~mv2.jpg" 2000
-          baixar ferracuti-site/img/_candidatas/hero-c.jpg "ccb978_0aedb10fcd734743b35b6bacf4de45cc~mv2.jpg" 2000
-          baixar ferracuti-site/img/_candidatas/sandra-a.jpg "ccb978_ffa161c9160f41c1bffdc59b8d1e0836~mv2.jpg" 1400
-          baixar ferracuti-site/img/_candidatas/sandra-b.jpg "ccb978_72a29a02420b4a559a9a3d1d29e4314e~mv2.jpg" 1400
-          baixar ferracuti-site/img/_candidatas/sandra-c.jpg "ccb978_6c9d5e0c653644e490b9bad6ebd10603~mv2.jpg" 1400
-          ls -la ferracuti-site/img/projetos ferracuti-site/img/_candidatas
+          # Versões a cores do ensaio fotográfico (hero)
+          baixar ferracuti-site/img/hero.jpg "ccb978_bb08ef829b14480382a63b96305abaa9~mv2.jpg" 2200
+          baixar ferracuti-site/img/_candidatas/hero-d.jpg "ccb978_a3e1f8d2bade4f5b88936314e50b999b~mv2.jpg" 2200
+          baixar ferracuti-site/img/_candidatas/hero-e.jpg "ccb978_88903f9d94fd412c8a179129e3324a23~mv2.jpg" 2200
+          ls -la ferracuti-site/img
 
       - name: Commit e push
         run: |
@@ -79,7 +41,7 @@ jobs:
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
             git add ferracuti-site/img
-            git commit -m "Importar fotografias dos projetos a partir do Wix"
+            git commit -m "Importar fotografia de hero a cores a partir do Wix"
             git push
           else
             echo "Sem alterações."

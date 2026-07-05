@@ -1,4 +1,5 @@
 /* ============================================================================
+   VIEIRINHA040726 — fotografias reais dos projetos importadas do Wix
    VIEIRINHA040726 — criação inicial do site
 
    FERRACUTI — Arquitetura e Design de Interiores
@@ -74,7 +75,9 @@ const CONTEUDO = {
       galeria: [
         "img/projetos/ginasio-canidelo-2.jpg",
         "img/projetos/ginasio-canidelo-3.jpg",
-        "img/projetos/ginasio-canidelo-4.jpg"
+        "img/projetos/ginasio-canidelo-4.jpg",
+        "img/projetos/ginasio-canidelo-5.jpg",
+        "img/projetos/ginasio-canidelo-6.jpg"
       ],
       destaque: true
     },
@@ -84,7 +87,10 @@ const CONTEUDO = {
       capa: "img/projetos/ginasio-afurada-1.jpg",
       galeria: [
         "img/projetos/ginasio-afurada-2.jpg",
-        "img/projetos/ginasio-afurada-3.jpg"
+        "img/projetos/ginasio-afurada-3.jpg",
+        "img/projetos/ginasio-afurada-4.jpg",
+        "img/projetos/ginasio-afurada-5.jpg",
+        "img/projetos/ginasio-afurada-6.jpg"
       ],
       destaque: false
     },
@@ -103,7 +109,9 @@ const CONTEUDO = {
       capa: "img/projetos/quarto-bebe-1.jpg",
       galeria: [
         "img/projetos/quarto-bebe-2.jpg",
-        "img/projetos/quarto-bebe-3.jpg"
+        "img/projetos/quarto-bebe-3.jpg",
+        "img/projetos/quarto-bebe-4.jpg",
+        "img/projetos/quarto-bebe-5.jpg"
       ],
       destaque: false
     },
@@ -112,7 +120,8 @@ const CONTEUDO = {
       categoria: "residencial",
       capa: "img/projetos/quarto-solteiro-1.jpg",
       galeria: [
-        "img/projetos/quarto-solteiro-2.jpg"
+        "img/projetos/quarto-solteiro-2.jpg",
+        "img/projetos/quarto-solteiro-3.jpg"
       ],
       destaque: false
     },
@@ -121,7 +130,9 @@ const CONTEUDO = {
       categoria: "comercial",
       capa: "img/projetos/sala-reunioes-1.jpg",
       galeria: [
-        "img/projetos/sala-reunioes-2.jpg"
+        "img/projetos/sala-reunioes-2.jpg",
+        "img/projetos/sala-reunioes-3.jpg",
+        "img/projetos/sala-reunioes-4.jpg"
       ],
       destaque: false
     },
@@ -131,7 +142,8 @@ const CONTEUDO = {
       capa: "img/projetos/clinica-rececao-1.jpg",
       galeria: [
         "img/projetos/clinica-rececao-2.jpg",
-        "img/projetos/clinica-rececao-3.jpg"
+        "img/projetos/clinica-rececao-3.jpg",
+        "img/projetos/clinica-rececao-4.jpg"
       ],
       destaque: false
     },
