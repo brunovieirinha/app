@@ -33,7 +33,7 @@
   <!-- Tipografia: Fraunces (display) + Work Sans (corpo) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&family=Work+Sans:wght@300;400;500;600&family=Jost:wght@300;400;500&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
 
   <style>
     /* ================================================================
@@ -50,6 +50,9 @@
       --raio: 2px;
       --display: "Fraunces", Georgia, serif;
       --corpo: "Work Sans", -apple-system, Helvetica, Arial, sans-serif;
+      /* fontes do logótipo real da marca — ver nota junto de .marca */
+      --marca-fonte: "Jost", "Work Sans", sans-serif;
+      --assinatura: "Caveat", cursive;
       /* trama de corte arquitetónico usada nos placeholders */
       --trama: repeating-linear-gradient(45deg,
                  transparent 0 9px, rgba(38, 36, 31, .09) 9px 10px);
@@ -262,13 +265,30 @@
       gap: 2rem;
       padding: 1.1rem 0;
     }
+    /* Reprodução do logótipo real da Ferracuti: "FERRACUTI" numa
+       geométrica sans (Jost) + assinatura script (Caveat), tal como
+       usado nos materiais existentes da marca. */
     .marca {
-      font-family: var(--display);
-      font-weight: 500;
-      font-size: 1.28rem;
-      letter-spacing: .3em;
+      display: flex;
+      flex-direction: column;
+      gap: .05rem;
       text-decoration: none;
       color: var(--carvao);
+      transition: color .3s ease;
+    }
+    .marca-nome {
+      font-family: var(--marca-fonte);
+      font-weight: 300;
+      font-size: 1.34rem;
+      letter-spacing: .22em;
+      color: inherit;
+    }
+    .marca-tagline {
+      font-family: var(--assinatura);
+      font-weight: 500;
+      font-size: 1rem;
+      line-height: 1;
+      color: var(--oliva);
       transition: color .3s ease;
     }
     .nav-principal ul {
@@ -292,6 +312,7 @@
     /* sobre o hero com fotografia, o cabeçalho fica em claro */
     body.hero-com-foto .cabecalho:not(.solido) .marca,
     body.hero-com-foto .cabecalho:not(.solido) .nav-principal a { color: #fff; }
+    body.hero-com-foto .cabecalho:not(.solido) .marca-tagline { color: rgba(255,255,255,.8); }
     body.hero-com-foto .cabecalho:not(.solido) .nav-principal a:hover { border-bottom-color: #fff; }
     body.hero-com-foto .cabecalho:not(.solido) .hamburguer span { background: #fff; }
 
@@ -400,11 +421,11 @@
       margin-bottom: 1.6rem;
     }
     .hero-titulo {
+      font-family: var(--marca-fonte);
       font-size: clamp(3.4rem, 11vw, 8.2rem);
       font-weight: 300;
-      letter-spacing: .12em;
+      letter-spacing: .05em;
       color: var(--carvao);
-      margin-left: -.04em;
     }
     .hero-tagline {
       max-width: 34em;
@@ -791,8 +812,9 @@
       color: rgba(247,245,240,.55);
     }
     .rodape-base .marca-mini {
-      font-family: var(--display);
-      letter-spacing: .3em;
+      font-family: var(--marca-fonte);
+      font-weight: 300;
+      letter-spacing: .22em;
       color: rgba(247,245,240,.8);
     }
 
@@ -955,7 +977,10 @@
        ================================================================ -->
   <header class="cabecalho" id="cabecalho">
     <div class="contentor cabecalho-interior">
-      <a class="marca" href="#inicio" aria-label="Ferracuti — início">FERRACUTI</a>
+      <a class="marca" href="#inicio" aria-label="Ferracuti — início">
+        <span class="marca-nome">FERRACUTI</span>
+        <span class="marca-tagline" aria-hidden="true">arquitetura e interiores</span>
+      </a>
 
       <button class="hamburguer" id="hamburguer" aria-expanded="false" aria-controls="nav-principal" aria-label="Abrir menu">
         <span></span><span></span><span></span>
