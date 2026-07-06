@@ -1,0 +1,37 @@
+# VIEIRINHA050726 — workflow temporário para trazer o logótipo original
+# do Media Manager do Wix e identificar as fontes usadas. Remover depois.
+name: Importar logo do Wix
+
+on:
+  push:
+    branches: [claude/ferracuti-static-site-lxe83w]
+
+permissions:
+  contents: write
+
+jobs:
+  importar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Descarregar logo
+        run: |
+          set -euo pipefail
+          mkdir -p ferracuti-site/img/_logo-referencia
+          curl -fsSL --retry 3 -o ferracuti-site/img/_logo-referencia/logo-a.png \
+            "https://static.wixstatic.com/media/ccb978_b3bf619304b14263bb00fae7b9a76909~mv2.png/v1/fit/w_1200,h_1200,q_90/foto.png"
+          curl -fsSL --retry 3 -o ferracuti-site/img/_logo-referencia/logo-b.png \
+            "https://static.wixstatic.com/media/ccb978_fd3808fc951449dfb74b3311ac11efde~mv2.png/v1/fit/w_1200,h_1200,q_90/foto.png"
+          ls -la ferracuti-site/img/_logo-referencia
+      - name: Commit e push
+        run: |
+          set -euo pipefail
+          if git status --porcelain | grep -q .; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add ferracuti-site/img/_logo-referencia
+            git commit -m "Importar logo de referência do Wix"
+            git push
+          else
+            echo "Sem alterações."
+          fi
