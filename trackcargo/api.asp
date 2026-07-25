@@ -17,11 +17,15 @@ Const DB_DATABASE = "PHC_Portocargo"
 Const PHC_PERFIL_NO = 0   ' 0 = sem restrição; N = exige perfil PHC nº N
 
 '----------------------------------------------------------------
-' ShipsGo API v1.2 — o authCode é SERVER-SIDE e nunca é enviado
-' ao browser. Todas as chamadas ShipsGo saem do IIS.
+' ShipsGo — tokens SERVER-SIDE, nunca enviados ao browser.
+' Marítimo: API v1.2 (authCode) · Aéreo: API v2 (API key no header)
+' NOTA: confirmar no dashboard ShipsGo se a API key v2 (aéreo) é a
+' mesma do authCode v1.2 — se não for, atualizar SHIPSGO_AIR_TOKEN.
 '----------------------------------------------------------------
 Const SHIPSGO_AUTHCODE = "668e9266-0d35-4054-a3d3-f09b8a68fab5"
 Const SHIPSGO_BASE     = "https://shipsgo.com/api/v1.2/ContainerService/"
+Const SHIPSGO_AIR_TOKEN = "668e9266-0d35-4054-a3d3-f09b8a68fab5"
+Const SHIPSGO_AIR_BASE  = "https://api.shipsgo.com/v2/air/shipments"
 
 Dim sAction
 sAction = LCase(Trim(Request.QueryString("action")))
@@ -176,6 +180,50 @@ Function ShipsGoHttp(ByVal sMethod, ByVal sUrl, ByVal sBody)
     Set ShipsGoHttp = oRes
 End Function
 
+' Chamadas à API v2 (aéreo) — JSON + API key no header
+Function ShipsGoAirHttp(ByVal sMethod, ByVal sUrl, ByVal sJsonBody)
+    Dim http
+    Set http = Server.CreateObject("MSXML2.ServerXMLHTTP.6.0")
+    http.setTimeouts 15000, 15000, 30000, 60000
+    http.Open sMethod, sUrl, False
+    http.setRequestHeader "Accept", "application/json"
+    http.setRequestHeader "X-Shipsgo-User-Token", SHIPSGO_AIR_TOKEN
+    If UCase(sMethod) = "POST" Then
+        http.setRequestHeader "Content-Type", "application/json"
+        http.Send sJsonBody
+    Else
+        http.Send
+    End If
+    Dim oRes
+    Set oRes = Server.CreateObject("Scripting.Dictionary")
+    oRes.Add "status", http.Status
+    oRes.Add "body", http.responseText
+    Set http = Nothing
+    Set ShipsGoAirHttp = oRes
+End Function
+
+' Extrai o primeiro "id": numérico de uma resposta JSON (sem parser completo)
+Function ExtractJsonId(ByVal sBody)
+    ExtractJsonId = ""
+    Dim p, c, sNum
+    p = InStr(1, sBody, """id"":", vbTextCompare)
+    If p = 0 Then Exit Function
+    p = p + Len("""id"":")
+    sNum = ""
+    Do While p <= Len(sBody)
+        c = Mid(sBody, p, 1)
+        If c >= "0" And c <= "9" Then
+            sNum = sNum & c
+        ElseIf c = " " Or c = """" Then
+            If sNum <> "" Then Exit Do
+        Else
+            Exit Do
+        End If
+        p = p + 1
+    Loop
+    ExtractJsonId = sNum
+End Function
+
 ' Extrai "message" de uma resposta JSON de erro da ShipsGo (sem parser completo)
 Function ShipsGoErrMsg(ByVal sBody)
     Dim p1, p2
@@ -232,7 +280,9 @@ Sub DoLista()
         If Not bFirst Then sJson = sJson & ","
         sJson = sJson & "{" & _
             """id"":" & NzNum(rs("id")) & "," & _
+            """mode"":""" & JsonEscape(Nz(rs("transport_mode"))) & """," & _
             """container"":""" & JsonEscape(Nz(rs("container_no"))) & """," & _
+            """awb"":""" & JsonEscape(Nz(rs("awb_no"))) & """," & _
             """bl"":""" & JsonEscape(Nz(rs("bl_no"))) & """," & _
             """processo"":""" & JsonEscape(Nz(rs("ref_processo"))) & """," & _
             """line"":""" & JsonEscape(Nz(rs("shipping_line"))) & """," & _
@@ -300,7 +350,9 @@ Sub DoDetalhe()
     Dim sJson
     sJson = "{" & _
         """id"":" & NzNum(rs("id")) & "," & _
+        """mode"":""" & JsonEscape(Nz(rs("transport_mode"))) & """," & _
         """container"":""" & JsonEscape(Nz(rs("container_no"))) & """," & _
+        """awb"":""" & JsonEscape(Nz(rs("awb_no"))) & """," & _
         """bl"":""" & JsonEscape(Nz(rs("bl_no"))) & """," & _
         """processo"":""" & JsonEscape(Nz(rs("ref_processo"))) & """," & _
         """line"":""" & JsonEscape(Nz(rs("shipping_line"))) & """," & _
@@ -343,38 +395,57 @@ Sub DoAddSafe()
 End Sub
 
 Sub DoAdd()
-    Dim sContainer, sBl, sLine, sProcesso
+    Dim sMode, sContainer, sBl, sAwb, sLine, sProcesso
+    sMode      = UCase(Trim(Request.Form("mode")))
+    If sMode <> "AIR" Then sMode = "SEA"
     sContainer = UCase(Trim(Request.Form("container")))
     sBl        = Trim(Request.Form("bl"))
+    sAwb       = Trim(Request.Form("awb"))
     sLine      = Trim(Request.Form("line"))
     sProcesso  = Trim(Request.Form("processo"))
     If sLine = "" Then sLine = "OTHERS"
 
-    If sContainer = "" And sBl = "" Then
+    If sMode = "AIR" And sAwb = "" Then
+        Response.Write "{""error"":""Indicar o nº do AWB""}"
+        Exit Sub
+    End If
+    If sMode = "SEA" And sContainer = "" And sBl = "" Then
         Response.Write "{""error"":""Indicar nº de contentor ou BL""}"
         Exit Sub
     End If
 
     ' --- 1) Criar o tracking na ShipsGo
-    Dim sUrl, sBody, oRes
-    If sContainer <> "" Then
-        sUrl  = SHIPSGO_BASE & "PostContainerInfo"
-        sBody = "authCode=" & SHIPSGO_AUTHCODE & _
-                "&containerNumber=" & Server.URLEncode(sContainer) & _
-                "&shippingLine=" & Server.URLEncode(sLine)
+    Dim sUrl, sBody, oRes, sReqId
+    If sMode = "AIR" Then
+        ' API v2 aéreo: POST JSON com o AWB (a companhia é detetada pelo prefixo)
+        sBody = "{""awb_number"":""" & JsonEscape(sAwb) & """,""follow"":true}"
+        Set oRes = ShipsGoAirHttp("POST", SHIPSGO_AIR_BASE, sBody)
+        sReqId = ExtractJsonId(oRes("body"))
+        If Not (oRes("status") >= 200 And oRes("status") < 300 And sReqId <> "") Then
+            Response.Write "{""error"":""ShipsGo Air: " & JsonEscape(ShipsGoErrMsg(oRes("body"))) & " (HTTP " & oRes("status") & ")""}"
+            Exit Sub
+        End If
+        sLine = ""   ' companhia aérea vem no primeiro sync
     Else
-        sUrl  = SHIPSGO_BASE & "PostContainerInfoWithBl"
-        sBody = "authCode=" & SHIPSGO_AUTHCODE & _
-                "&blContainersRef=" & Server.URLEncode(sBl) & _
-                "&shippingLine=" & Server.URLEncode(sLine)
-    End If
+        If sContainer <> "" Then
+            sUrl  = SHIPSGO_BASE & "PostContainerInfo"
+            sBody = "authCode=" & SHIPSGO_AUTHCODE & _
+                    "&containerNumber=" & Server.URLEncode(sContainer) & _
+                    "&shippingLine=" & Server.URLEncode(sLine)
+        Else
+            sUrl  = SHIPSGO_BASE & "PostContainerInfoWithBl"
+            sBody = "authCode=" & SHIPSGO_AUTHCODE & _
+                    "&blContainersRef=" & Server.URLEncode(sBl) & _
+                    "&shippingLine=" & Server.URLEncode(sLine)
+        End If
 
-    Set oRes = ShipsGoHttp("POST", sUrl, sBody)
+        Set oRes = ShipsGoHttp("POST", sUrl, sBody)
 
-    Dim sReqId : sReqId = Trim(Replace(Replace(CStr(oRes("body")), """", ""), vbCrLf, ""))
-    If Not (oRes("status") >= 200 And oRes("status") < 300 And IsNumeric(sReqId)) Then
-        Response.Write "{""error"":""ShipsGo: " & JsonEscape(ShipsGoErrMsg(oRes("body"))) & " (HTTP " & oRes("status") & ")""}"
-        Exit Sub
+        sReqId = Trim(Replace(Replace(CStr(oRes("body")), """", ""), vbCrLf, ""))
+        If Not (oRes("status") >= 200 And oRes("status") < 300 And IsNumeric(sReqId)) Then
+            Response.Write "{""error"":""ShipsGo: " & JsonEscape(ShipsGoErrMsg(oRes("body"))) & " (HTTP " & oRes("status") & ")""}"
+            Exit Sub
+        End If
     End If
 
     ' --- 2) Gravar o registo local
@@ -384,8 +455,10 @@ Sub DoAdd()
     Set cmd.ActiveConnection = conn
     cmd.CommandText = "usp_TrackCargo_Add"
     cmd.CommandType = 4
+    cmd.Parameters.Append cmd.CreateParameter("@transport_mode", 200, 1, 4,  sMode)
     cmd.Parameters.Append cmd.CreateParameter("@container_no",  200, 1, 20,  sContainer)
     cmd.Parameters.Append cmd.CreateParameter("@bl_no",         200, 1, 40,  sBl)
+    cmd.Parameters.Append cmd.CreateParameter("@awb_no",        200, 1, 20,  sAwb)
     cmd.Parameters.Append cmd.CreateParameter("@shipping_line", 200, 1, 20,  sLine)
     cmd.Parameters.Append cmd.CreateParameter("@shipsgo_reqid", 200, 1, 20,  sReqId)
     cmd.Parameters.Append cmd.CreateParameter("@ref_processo",  200, 1, 40,  sProcesso)
@@ -440,17 +513,24 @@ Sub DoSync()
         Exit Sub
     End If
     Dim sReqId : sReqId = Nz(rs("shipsgo_reqid"))
+    Dim sMode : sMode = UCase(Nz(rs("transport_mode")))
+    If sMode <> "AIR" Then sMode = "SEA"
     rs.Close : Set rs = Nothing
     conn.Close : Set conn = Nothing
 
     Dim sUrl, oRes
-    sUrl = SHIPSGO_BASE & "GetContainerInfo/?authCode=" & SHIPSGO_AUTHCODE & _
-           "&requestId=" & Server.URLEncode(sReqId) & "&mapPoint=true"
-    Set oRes = ShipsGoHttp("GET", sUrl, "")
+    If sMode = "AIR" Then
+        sUrl = SHIPSGO_AIR_BASE & "/" & Server.URLEncode(sReqId)
+        Set oRes = ShipsGoAirHttp("GET", sUrl, "")
+    Else
+        sUrl = SHIPSGO_BASE & "GetContainerInfo/?authCode=" & SHIPSGO_AUTHCODE & _
+               "&requestId=" & Server.URLEncode(sReqId) & "&mapPoint=true"
+        Set oRes = ShipsGoHttp("GET", sUrl, "")
+    End If
 
     Dim sBody : sBody = Trim(CStr(oRes("body")))
     If oRes("status") >= 200 And oRes("status") < 300 And (Left(sBody, 1) = "[" Or Left(sBody, 1) = "{") Then
-        Response.Write "{""id"":" & nId & ",""raw"":" & sBody & "}"
+        Response.Write "{""id"":" & nId & ",""mode"":""" & sMode & """,""raw"":" & sBody & "}"
     Else
         Response.Write "{""error"":""ShipsGo: " & JsonEscape(ShipsGoErrMsg(sBody)) & " (HTTP " & oRes("status") & ")""}"
     End If

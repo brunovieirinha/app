@@ -1,8 +1,11 @@
-# TrackCargo — Tracking de Contentores (PORTOCARGO)
+# TrackCargo — Tracking de Contentores e Carga Aérea (PORTOCARGO)
 
-App web interna para tracking em tempo real dos contentores movimentados pela Portocargo,
-com integração à API **ShipsGo v1.2** (agregador de tracking junto dos armadores) e mapa
-com a posição do navio.
+App web interna para tracking em tempo real da carga movimentada pela Portocargo:
+
+- **Marítimo** — contentores/BL via API **ShipsGo v1.2** (agregador junto dos armadores),
+  com mapa live da posição do navio
+- **Aéreo** — AWB via API **ShipsGo v2 Air** (tracking junto das companhias aéreas),
+  com rota de aeroportos e voos
 
 ## 1. Descrição e estrutura de ficheiros
 
@@ -17,14 +20,17 @@ trackcargo/
 
 **Fluxo de dados:**
 
-1. O utilizador adiciona um contentor ou BL → o IIS chama `PostContainerInfo` /
-   `PostContainerInfoWithBl` na ShipsGo (**consome 1 crédito**) e grava o `requestId` no SQL Server.
-2. Botão ⟳ / "Sincronizar todos" → o IIS chama `GetContainerInfo` (grátis, sem créditos),
+1. O utilizador adiciona um contentor/BL (marítimo) ou um AWB (aéreo) → o IIS chama a
+   ShipsGo (**consome 1 crédito** — os créditos ocean e air são contados à parte na
+   ShipsGo) e grava o id de tracking no SQL Server (`shipsgo_reqid`).
+   - Marítimo: `POST PostContainerInfo` / `PostContainerInfoWithBl` (API v1.2, form-urlencoded)
+   - Aéreo: `POST https://api.shipsgo.com/v2/air/shipments` (API v2, JSON, header `X-Shipsgo-User-Token`)
+2. Botão ⟳ / "Sincronizar todos" → o IIS consulta o estado atual (grátis, sem créditos),
    devolve o JSON à SPA, que extrai os campos e persiste o snapshot via `action=snapshot`.
-3. O detalhe mostra timeline de milestones (gate in, load, transbordos, chegada, descarga…)
-   e o mapa live da ShipsGo com a posição do navio (iframe).
+3. O detalhe mostra timeline de milestones — marítimo: gate in, load, transbordos,
+   chegada, descarga + mapa live do navio (iframe); aéreo: eventos/voos entre aeroportos.
 
-O **authCode ShipsGo vive apenas no `api.asp` (server-side)** — nunca é enviado ao browser.
+Os **tokens ShipsGo vivem apenas no `api.asp` (server-side)** — nunca são enviados ao browser.
 
 ## 2. Pré-requisitos
 
@@ -55,8 +61,10 @@ conta `website` apenas para o endpoint `branding`). Não necessita de alteraçõ
 | `DB_SERVER` | `PCPHC` | |
 | `DB_DATABASE` | `PHC_Portocargo` | |
 | `PHC_PERFIL_NO` | `0` | Mudar para N para exigir perfil PHC nº N |
-| `SHIPSGO_AUTHCODE` | *(já configurado)* | AuthCode da conta ShipsGo — **server-side only** |
-| `SHIPSGO_BASE` | `https://shipsgo.com/api/v1.2/ContainerService/` | API v1.2 |
+| `SHIPSGO_AUTHCODE` | *(já configurado)* | AuthCode v1.2 (marítimo) — **server-side only** |
+| `SHIPSGO_BASE` | `https://shipsgo.com/api/v1.2/ContainerService/` | API v1.2 (marítimo) |
+| `SHIPSGO_AIR_TOKEN` | *(= authCode, confirmar)* | API key v2 (aéreo) — ver Dashboard ShipsGo → API. **Pode ser diferente do authCode v1.2**; se o aéreo devolver 401, gerar/copiar a key v2 no dashboard |
+| `SHIPSGO_AIR_BASE` | `https://api.shipsgo.com/v2/air/shipments` | API v2 Air |
 
 ⚠ **Segurança do authCode**: o ficheiro `api.asp` nunca deve ficar acessível como texto
 (o IIS executa-o, não o serve). Se o repositório Git for partilhado fora da equipa,
@@ -73,7 +81,9 @@ Executar em `PHC_Portocargo`:
 ------------------------------------------------------------------
 CREATE TABLE dbo.u_trackcargo (
     id            INT IDENTITY(1,1) PRIMARY KEY,
+    transport_mode VARCHAR(4)  NOT NULL DEFAULT 'SEA',   -- SEA | AIR
     container_no  VARCHAR(20)  NOT NULL DEFAULT '',
+    awb_no        VARCHAR(20)  NOT NULL DEFAULT '',
     bl_no         VARCHAR(40)  NOT NULL DEFAULT '',
     ref_processo  VARCHAR(40)  NOT NULL DEFAULT '',
     shipping_line VARCHAR(20)  NOT NULL DEFAULT 'OTHERS',
@@ -105,12 +115,13 @@ CREATE PROCEDURE dbo.usp_TrackCargo_Lista
 AS
 BEGIN
     SET NOCOUNT ON;
-    SELECT id, container_no, bl_no, ref_processo, shipping_line, shipsgo_reqid,
-           [status], pol, pod, vessel, voyage, etd, eta, ata,
+    SELECT id, transport_mode, container_no, awb_no, bl_no, ref_processo, shipping_line,
+           shipsgo_reqid, [status], pol, pod, vessel, voyage, etd, eta, ata,
            CONVERT(VARCHAR(16), last_sync, 120) AS last_sync, created_by
     FROM dbo.u_trackcargo WITH(NOLOCK)
     WHERE active = 1
       AND (@filtro = '' OR container_no LIKE '%' + @filtro + '%'
+                        OR awb_no       LIKE '%' + @filtro + '%'
                         OR bl_no        LIKE '%' + @filtro + '%'
                         OR ref_processo LIKE '%' + @filtro + '%'
                         OR vessel       LIKE '%' + @filtro + '%')
@@ -127,8 +138,8 @@ CREATE PROCEDURE dbo.usp_TrackCargo_Detalhe
 AS
 BEGIN
     SET NOCOUNT ON;
-    SELECT id, container_no, bl_no, ref_processo, shipping_line, shipsgo_reqid,
-           [status], pol, pod, vessel, vessel_imo, voyage, etd, eta, ata,
+    SELECT id, transport_mode, container_no, awb_no, bl_no, ref_processo, shipping_line,
+           shipsgo_reqid, [status], pol, pod, vessel, vessel_imo, voyage, etd, eta, ata,
            last_json, CONVERT(VARCHAR(16), last_sync, 120) AS last_sync
     FROM dbo.u_trackcargo WITH(NOLOCK)
     WHERE id = @id;
@@ -139,8 +150,10 @@ GO
 -- SP: ADD (devolve o id novo; se o requestId já existir, reativa)
 ------------------------------------------------------------------
 CREATE PROCEDURE dbo.usp_TrackCargo_Add
+    @transport_mode VARCHAR(4),
     @container_no  VARCHAR(20),
     @bl_no         VARCHAR(40),
+    @awb_no        VARCHAR(20),
     @shipping_line VARCHAR(20),
     @shipsgo_reqid VARCHAR(20),
     @ref_processo  VARCHAR(40),
@@ -149,7 +162,8 @@ AS
 BEGIN
     SET NOCOUNT ON;
     DECLARE @id INT;
-    SELECT @id = id FROM dbo.u_trackcargo WITH(NOLOCK) WHERE shipsgo_reqid = @shipsgo_reqid;
+    SELECT @id = id FROM dbo.u_trackcargo WITH(NOLOCK)
+    WHERE shipsgo_reqid = @shipsgo_reqid AND transport_mode = @transport_mode;
     IF @id IS NOT NULL
     BEGIN
         UPDATE dbo.u_trackcargo
@@ -159,8 +173,8 @@ BEGIN
         SELECT @id AS id;
         RETURN;
     END
-    INSERT INTO dbo.u_trackcargo (container_no, bl_no, ref_processo, shipping_line, shipsgo_reqid, created_by)
-    VALUES (@container_no, @bl_no, @ref_processo, @shipping_line, @shipsgo_reqid, @created_by);
+    INSERT INTO dbo.u_trackcargo (transport_mode, container_no, bl_no, awb_no, ref_processo, shipping_line, shipsgo_reqid, created_by)
+    VALUES (@transport_mode, @container_no, @bl_no, @awb_no, @ref_processo, @shipping_line, @shipsgo_reqid, @created_by);
     SELECT CAST(SCOPE_IDENTITY() AS INT) AS id;
 END
 GO
@@ -225,6 +239,16 @@ GO
 -- GRANT EXECUTE ON dbo.usp_TrackCargo_Remove   TO [utilizador_ou_role];
 ```
 
+**Migração (se a versão só-marítimo já estava instalada):**
+
+```sql
+ALTER TABLE dbo.u_trackcargo ADD transport_mode VARCHAR(4) NOT NULL DEFAULT 'SEA';
+ALTER TABLE dbo.u_trackcargo ADD awb_no VARCHAR(20) NOT NULL DEFAULT '';
+GO
+-- Recriar as SPs usp_TrackCargo_Lista, usp_TrackCargo_Detalhe e usp_TrackCargo_Add
+-- com as definições acima (DROP PROCEDURE + CREATE PROCEDURE).
+```
+
 ## 7. Como testar
 
 1. **Ligação ShipsGo a partir do servidor** (o ambiente de desenvolvimento desta app não
@@ -239,7 +263,9 @@ GO
    marítimo atual). Consome 1 crédito. A app faz sync automático após criar.
 4. Verificar: linha na grelha com estado/ETA, detalhe com timeline e mapa.
 5. "Sincronizar todos" e conferir `last_sync` atualizado.
-6. Conferir na base: `SELECT * FROM u_trackcargo`.
+6. Aéreo: mudar para "Aéreo" na sidebar e adicionar um AWB real (formato `123-12345675`).
+   Se devolver HTTP 401, a API key v2 é diferente — ver secção 5 (`SHIPSGO_AIR_TOKEN`).
+7. Conferir na base: `SELECT * FROM u_trackcargo`.
 
 **Nota sobre o formato da resposta ShipsGo**: o parsing do JSON (nomes `Status`,
 `ArrivalDate`, `TSPorts`, `VesselLatitude`, …) foi escrito de forma defensiva
@@ -249,7 +275,10 @@ no `index.html` se a conta ShipsGo devolver nomes diferentes.
 
 ## 8. Funcionalidades
 
+- **Marítimo e aéreo na mesma app** — navegação Marítimo ⚓ / Aéreo ✈ na sidebar
 - Tracking por **nº de contentor** ou por **BL/booking** (1 crédito cobre o BL inteiro)
+- Tracking aéreo por **AWB** (companhia detetada pelo prefixo do AWB); timeline de
+  eventos/voos entre aeroportos
 - Milestones normalizados: gate in, load, partida, transbordos (TSPorts), chegada,
   descarga, gate out, devolução do vazio — timeline com estimado vs. efetivo
 - **Mapa live** da posição do navio (embed ShipsGo `marine-traffic`) + lat/lng
@@ -276,6 +305,8 @@ Criar a pasta `logo/` dentro de `trackcargo/` e colocar `logo.png` (ou `.jpg`, `
 | "ShipsGo: … (HTTP 401/403)" | authCode errado ou revogado | Confirmar no dashboard ShipsGo |
 | "ShipsGo: …" ao adicionar | Créditos esgotados, contentor inválido ou já existente | Ver mensagem; comprar créditos / verificar nº |
 | Estado UNTRACKABLE | Armador não suportado ou nº inexistente | Tentar por BL, ou escolher o armador correto em vez de auto |
+| "ShipsGo Air: … (HTTP 401)" | API key v2 diferente do authCode v1.2 | Copiar a key v2 do dashboard para `SHIPSGO_AIR_TOKEN` |
+| Aéreo sem eventos/campos vazios | Formato da resposta v2 diferente do esperado | Colar o JSON real e ajustar `extractAirSnapshot()`/`buildAirTimeline()` no index.html |
 | "Credenciais inválidas" no login | Login SQL sem acesso a PHC_Portocargo | Criar login SQL + user na BD com EXECUTE nas SPs |
 | Grelha vazia após sync | SPs sem GRANT EXECUTE | Correr os GRANTs da secção 6 |
 | Datas vazias no snapshot | Formato de data ShipsGo diferente | Ajustar `normDate()` no index.html e os `TRY_CONVERT` na SP Snapshot |

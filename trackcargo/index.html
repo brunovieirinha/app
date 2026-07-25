@@ -276,7 +276,9 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
       <span class="sidebar-title">TrackCargo</span>
     </div>
     <nav>
-      <a class="active" data-i18n="navContainers">Contentores</a>
+      <a id="navAll" class="active" onclick="setMode('')" data-i18n="navAll">Todos</a>
+      <a id="navSea" onclick="setMode('SEA')" data-i18n="navSea">⚓ Marítimo</a>
+      <a id="navAir" onclick="setMode('AIR')" data-i18n="navAir">✈ Aéreo</a>
     </nav>
     <div class="sidebar-footer">
       <button onclick="toggleTheme()">🌙 <span data-i18n="btnDark">Dark Mode</span></button>
@@ -297,6 +299,8 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
         <option value="GATE OUT">GATE OUT</option>
         <option value="EMPTY">EMPTY RETURNED</option>
         <option value="UNTRACK">UNTRACKABLE</option>
+        <option value="IN TRANSIT">IN TRANSIT (aéreo)</option>
+        <option value="DELIVERED">DELIVERED (aéreo)</option>
       </select>
       <button class="btn-action btn-primary" onclick="loadData()" data-i18n="btnRefresh">Actualizar</button>
       <span class="spacer"></span>
@@ -323,7 +327,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
             <table class="tbl" id="mainTable">
               <thead>
                 <tr>
-                  <th onclick="sortBy('container')" data-i18n="colContainer">Contentor</th>
+                  <th onclick="sortBy('container')" data-i18n="colContainer">Ref. (Contentor/AWB)</th>
                   <th onclick="sortBy('bl')" data-i18n="colBl">BL</th>
                   <th onclick="sortBy('processo')" data-i18n="colProc">Processo</th>
                   <th onclick="sortBy('line')" data-i18n="colLine">Armador</th>
@@ -368,15 +372,27 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
     <div class="modal-body">
       <div class="form-grid">
         <div>
+          <label data-i18n="lblMode">Tipo de transporte</label>
+          <select id="addMode" onchange="onAddModeChange()">
+            <option value="SEA" data-i18n="optSea">⚓ Marítimo (contentor / BL)</option>
+            <option value="AIR" data-i18n="optAir">✈ Aéreo (AWB)</option>
+          </select>
+        </div>
+        <div id="grpAwb" style="display:none">
+          <label data-i18n="lblAwb">Nº do AWB</label>
+          <input type="text" id="addAwb" placeholder="123-12345675" maxlength="20">
+          <div class="form-hint" data-i18n="hintAwb">A companhia aérea é detetada pelo prefixo do AWB.</div>
+        </div>
+        <div id="grpContainer">
           <label data-i18n="lblContainer">Nº do contentor</label>
           <input type="text" id="addContainer" placeholder="MSCU1234567" maxlength="11" style="text-transform:uppercase">
         </div>
-        <div>
+        <div id="grpBl">
           <label data-i18n="lblBl">— ou — Nº do BL / Booking</label>
           <input type="text" id="addBl" placeholder="MEDUXX123456">
           <div class="form-hint" data-i18n="hintBl">Tracking por BL cobre todos os contentores do BL com 1 só crédito ShipsGo.</div>
         </div>
-        <div>
+        <div id="grpLine">
           <label data-i18n="lblLine">Armador</label>
           <select id="addLine">
             <option value="OTHERS" data-i18n="optAuto">Detetar automaticamente</option>
@@ -429,8 +445,13 @@ const T = {
     btnLogin:"Entrar", btnLogout:"Sair", btnDark:"Dark Mode", btnRefresh:"Actualizar",
     btnExport:"Exportar XLSX", btnSyncAll:"Sincronizar todos", btnAdd:"+ Adicionar",
     btnCancel:"Cancelar", btnSave:"Adicionar",
-    navContainers:"Contentores",
-    phSearch:"Contentor / BL / processo / navio…",
+    navContainers:"Contentores", navAll:"Todos", navSea:"⚓ Marítimo", navAir:"✈ Aéreo",
+    lblMode:"Tipo de transporte", optSea:"⚓ Marítimo (contentor / BL)", optAir:"✈ Aéreo (AWB)",
+    lblAwb:"Nº do AWB", hintAwb:"A companhia aérea é detetada pelo prefixo do AWB.",
+    lblAirline:"Companhia aérea", lblFlight:"Voo",
+    evAirBooked:"Booking confirmado", evAirRcs:"Carga recebida", evAirDep:"Partida do voo",
+    evAirArr:"Chegada do voo", evAirDlv:"Entregue",
+    phSearch:"Contentor / AWB / BL / processo / navio…",
     fltAll:"Todos os estados",
     kpiTotal:"Trackings ativos", kpiTransit:"Em trânsito", kpiWeek:"Chegam em ≤ 7 dias", kpiArrived:"Chegados",
     tblTitle:"Contentores em tracking",
@@ -457,8 +478,13 @@ const T = {
     btnLogin:"Sign in", btnLogout:"Logout", btnDark:"Dark Mode", btnRefresh:"Refresh",
     btnExport:"Export XLSX", btnSyncAll:"Sync all", btnAdd:"+ Add",
     btnCancel:"Cancel", btnSave:"Add",
-    navContainers:"Containers",
-    phSearch:"Container / BL / file / vessel…",
+    navContainers:"Containers", navAll:"All", navSea:"⚓ Ocean", navAir:"✈ Air",
+    lblMode:"Transport mode", optSea:"⚓ Ocean (container / BL)", optAir:"✈ Air (AWB)",
+    lblAwb:"AWB number", hintAwb:"The airline is detected from the AWB prefix.",
+    lblAirline:"Airline", lblFlight:"Flight",
+    evAirBooked:"Booking confirmed", evAirRcs:"Cargo received", evAirDep:"Flight departure",
+    evAirArr:"Flight arrival", evAirDlv:"Delivered",
+    phSearch:"Container / AWB / BL / file / vessel…",
     fltAll:"All statuses",
     kpiTotal:"Active trackings", kpiTransit:"In transit", kpiWeek:"Arriving ≤ 7 days", kpiArrived:"Arrived",
     tblTitle:"Tracked containers",
@@ -487,6 +513,19 @@ let currentLang = localStorage.getItem('lang') || 'pt';
 let currentTheme = localStorage.getItem('theme') || 'light';
 let rows = [];
 let sortCol = 'eta', sortAsc = true;
+let currentMode = '';   // '' = todos | 'SEA' | 'AIR'
+
+function setMode(m) {
+  currentMode = m;
+  document.getElementById('navAll').className = m === '' ? 'active' : '';
+  document.getElementById('navSea').className = m === 'SEA' ? 'active' : '';
+  document.getElementById('navAir').className = m === 'AIR' ? 'active' : '';
+  renderKpis();
+  renderTable();
+}
+function visibleRows() {
+  return currentMode ? rows.filter(r => (r.mode || 'SEA') === currentMode) : rows;
+}
 
 function t(k) { return (T[currentLang] && T[currentLang][k]) || k; }
 
@@ -630,6 +669,36 @@ function extractSnapshot(raw) {
   };
 }
 
+// API v2 aéreo — resposta {data:{...}} ou objeto direto; nomes em snake_case
+function airPort(p) {
+  if (!p) return '';
+  if (typeof p === 'string') return p;
+  const a = p.airport || p;
+  return a.iata || a.code || a.name || '';
+}
+function extractAirSnapshot(raw) {
+  const d = (raw && raw.data) ? raw.data : (raw || {});
+  const route = d.route || {};
+  const airline = d.airline || {};
+  const flights = Array.isArray(d.flights) ? d.flights : [];
+  const events = Array.isArray(d.events) ? d.events : [];
+  const lastArr = events.filter(e => /ARR|DLV|DELIVER/i.test(e.type || e.event || '')).pop();
+  const etaField = d.eta || (route.destination && (route.destination.eta || route.destination.arrival)) || '';
+  const etdField = d.etd || (route.origin && (route.origin.etd || route.origin.departure)) || '';
+  return {
+    container: '',
+    status: d.status || d.status_code || '',
+    pol: airPort(route.origin) || d.origin || '',
+    pod: airPort(route.destination) || d.destination || '',
+    vessel: airline.name || airline.iata || '',
+    vessel_imo: '',
+    voyage: flights.map(f => f.flight_number || f.number || '').filter(Boolean).join(', '),
+    etd: sgDate(etdField),
+    eta: sgDate(etaField),
+    ata: /DELIVER|DLV/i.test(d.status || '') && lastArr ? sgDate(lastArr.datetime || lastArr.date) : ''
+  };
+}
+
 // ============================================================
 // DADOS
 // ============================================================
@@ -657,25 +726,26 @@ function setEstado(v) {
 }
 
 function renderKpis() {
+  const vis = visibleRows();
   const now = new Date();
   const week = new Date(now.getTime() + 7 * 86400000);
-  const arrived = s => /ARRIV|DISCHARG|GATE OUT|EMPTY/i.test(s.status) || s.ata;
-  const transit = s => /SAILING|LOADED|TRANSSHIP|BOOKED/i.test(s.status) && !s.ata;
-  document.getElementById('kpiTotal').textContent = rows.length;
-  document.getElementById('kpiTransit').textContent = rows.filter(transit).length;
-  document.getElementById('kpiWeek').textContent = rows.filter(s => {
+  const arrived = s => /ARRIV|DISCHARG|GATE OUT|EMPTY|DELIVER/i.test(s.status) || s.ata;
+  const transit = s => /SAILING|LOADED|TRANSSHIP|BOOKED|TRANSIT|DEPART/i.test(s.status) && !s.ata;
+  document.getElementById('kpiTotal').textContent = vis.length;
+  document.getElementById('kpiTransit').textContent = vis.filter(transit).length;
+  document.getElementById('kpiWeek').textContent = vis.filter(s => {
     if (arrived(s) || !s.eta) return false;
     const d = new Date(s.eta);
     return d >= now && d <= week;
   }).length;
-  document.getElementById('kpiArrived').textContent = rows.filter(arrived).length;
+  document.getElementById('kpiArrived').textContent = vis.filter(arrived).length;
 }
 
 function badgeClass(status) {
   const s = String(status || '').toUpperCase();
-  if (/UNTRACK/.test(s)) return 'b-red';
-  if (/ARRIV|DISCHARG|GATE OUT|EMPTY/.test(s)) return 'b-green';
-  if (/SAILING|LOADED|TRANSSHIP/.test(s)) return 'b-blue';
+  if (/UNTRACK|EXCEPTION/.test(s)) return 'b-red';
+  if (/ARRIV|DISCHARG|GATE OUT|EMPTY|DELIVER/.test(s)) return 'b-green';
+  if (/SAILING|LOADED|TRANSSHIP|TRANSIT|DEPART/.test(s)) return 'b-blue';
   if (/BOOK/.test(s)) return 'b-orange';
   return 'b-gray';
 }
@@ -687,13 +757,17 @@ function sortBy(col) {
 
 function renderTable() {
   const tb = document.getElementById('tableBody');
-  const sorted = [...rows].sort((a, b) => {
+  const vis = visibleRows();
+  const sorted = [...vis].sort((a, b) => {
     const x = String(a[sortCol] || ''), y = String(b[sortCol] || '');
     return sortAsc ? x.localeCompare(y) : y.localeCompare(x);
   });
-  document.getElementById('rowCount').textContent = rows.length ? rows.length + ' reg.' : '';
-  document.getElementById('emptyState').style.display = rows.length ? 'none' : 'block';
+  document.getElementById('rowCount').textContent = vis.length ? vis.length + ' reg.' : '';
+  document.getElementById('emptyState').style.display = vis.length ? 'none' : 'block';
   tb.innerHTML = sorted.map(s => {
+    const isAir = (s.mode || 'SEA') === 'AIR';
+    const ref = isAir ? s.awb : s.container;
+    const icon = isAir ? '✈ ' : '⚓ ';
     const eta = s.ata || s.eta;
     let etaBadge = '';
     if (!s.ata && s.eta) {
@@ -701,7 +775,7 @@ function renderTable() {
       if (!isNaN(dd) && dd >= 0 && dd <= 7) etaBadge = ' <span class="badge b-orange">' + dd + t('days') + '</span>';
     }
     return '<tr>' +
-      '<td class="mono"><a href="#" onclick="openDetail(' + s.id + ');return false" style="color:var(--blue-mid);font-weight:600;text-decoration:none">' + esc(s.container || '—') + '</a></td>' +
+      '<td class="mono"><a href="#" onclick="openDetail(' + s.id + ');return false" style="color:var(--blue-mid);font-weight:600;text-decoration:none">' + icon + esc(ref || '—') + '</a></td>' +
       '<td class="mono">' + esc(s.bl) + '</td>' +
       '<td>' + esc(s.processo) + '</td>' +
       '<td>' + esc(s.line) + '</td>' +
@@ -722,12 +796,23 @@ function renderTable() {
 // ============================================================
 // ADICIONAR TRACKING
 // ============================================================
+function onAddModeChange() {
+  const air = document.getElementById('addMode').value === 'AIR';
+  document.getElementById('grpAwb').style.display = air ? 'block' : 'none';
+  document.getElementById('grpContainer').style.display = air ? 'none' : 'block';
+  document.getElementById('grpBl').style.display = air ? 'none' : 'block';
+  document.getElementById('grpLine').style.display = air ? 'none' : 'block';
+}
+
 function openAddModal() {
   document.getElementById('addError').textContent = '';
   document.getElementById('addContainer').value = '';
   document.getElementById('addBl').value = '';
+  document.getElementById('addAwb').value = '';
   document.getElementById('addProcesso').value = '';
   document.getElementById('addLine').value = 'OTHERS';
+  document.getElementById('addMode').value = currentMode === 'AIR' ? 'AIR' : 'SEA';
+  onAddModeChange();
   document.getElementById('addOverlay').style.display = 'flex';
 }
 function closeAdd() { document.getElementById('addOverlay').style.display = 'none'; }
@@ -735,12 +820,19 @@ function closeAdd() { document.getElementById('addOverlay').style.display = 'non
 async function submitAdd() {
   const errEl = document.getElementById('addError');
   errEl.textContent = '';
+  const mode = document.getElementById('addMode').value;
   const fd = new FormData();
+  fd.append('mode', mode);
   fd.append('container', document.getElementById('addContainer').value.trim().toUpperCase());
   fd.append('bl', document.getElementById('addBl').value.trim());
+  fd.append('awb', document.getElementById('addAwb').value.trim());
   fd.append('line', document.getElementById('addLine').value);
   fd.append('processo', document.getElementById('addProcesso').value.trim());
-  if (!fd.get('container') && !fd.get('bl')) {
+  if (mode === 'AIR' && !fd.get('awb')) {
+    errEl.textContent = currentLang === 'pt' ? 'Indique o nº do AWB' : 'Enter the AWB number';
+    return;
+  }
+  if (mode === 'SEA' && !fd.get('container') && !fd.get('bl')) {
     errEl.textContent = currentLang === 'pt' ? 'Indique o contentor ou o BL' : 'Enter a container or BL number';
     return;
   }
@@ -766,7 +858,7 @@ async function syncOne(id, silent) {
     const r = await fetch('api.asp?action=sync&id=' + id);
     const d = await r.json();
     if (d.error) throw new Error(d.error);
-    const snap = extractSnapshot(d.raw);
+    const snap = d.mode === 'AIR' ? extractAirSnapshot(d.raw) : extractSnapshot(d.raw);
     const fd = new FormData();
     fd.append('id', id);
     Object.keys(snap).forEach(k => fd.append(k, snap[k]));
@@ -847,22 +939,63 @@ function buildTimeline(c) {
   return ev;
 }
 
+function buildAirTimeline(c) {
+  const ev = [];
+  if (!c) return ev;
+  const events = Array.isArray(c.events) ? c.events : [];
+  const flights = Array.isArray(c.flights) ? c.flights : [];
+  const typeLabel = ty => {
+    ty = String(ty || '').toUpperCase();
+    if (/BKD|BOOK/.test(ty)) return t('evAirBooked');
+    if (/RCS|RCV/.test(ty)) return t('evAirRcs');
+    if (/DEP/.test(ty)) return t('evAirDep');
+    if (/ARR/.test(ty)) return t('evAirArr');
+    if (/DLV|DELIVER/.test(ty)) return t('evAirDlv');
+    return ty;
+  };
+  events.forEach(e => {
+    const dt = sgDate(e.datetime || e.date || e.event_date);
+    if (dt) ev.push({
+      label: typeLabel(e.type || e.event || e.code) + (e.flight_number ? ' · ' + e.flight_number : ''),
+      dt, loc: airPort(e.location || e.airport) || '', actual: e.is_estimated ? false : true
+    });
+  });
+  if (!ev.length) {
+    flights.forEach(f => {
+      const dep = sgDate(f.departure && (f.departure.actual || f.departure.estimated || f.departure));
+      const arr = sgDate(f.arrival && (f.arrival.actual || f.arrival.estimated || f.arrival));
+      if (dep) ev.push({ label: t('evAirDep') + (f.flight_number ? ' · ' + f.flight_number : ''), dt: dep, loc: airPort(f.origin), actual: true });
+      if (arr) ev.push({ label: t('evAirArr') + (f.flight_number ? ' · ' + f.flight_number : ''), dt: arr, loc: airPort(f.destination), actual: false });
+    });
+  }
+  return ev;
+}
+
 function renderDetail(d) {
-  const c = Array.isArray(d.raw) ? (d.raw[0] || null) : d.raw;
+  const isAir = d.mode === 'AIR';
+  const c = isAir
+    ? ((d.raw && d.raw.data) ? d.raw.data : d.raw)
+    : (Array.isArray(d.raw) ? (d.raw[0] || null) : d.raw);
   document.getElementById('modalTitle').textContent =
-    t('detTitle') + ' — ' + (d.container || d.bl || '');
+    (isAir ? '✈ ' : '⚓ ') + t('detTitle') + ' — ' + (isAir ? (d.awb || '') : (d.container || d.bl || ''));
 
   let html = '<div class="det-grid">';
   const item = (lbl, val, mono) => val
     ? '<div class="det-item"><div class="lbl">' + esc(lbl) + '</div><div class="val' + (mono ? ' mono' : '') + '">' + esc(val) + '</div></div>'
     : '';
-  html += item(t('colContainer'), d.container, true);
-  html += item('BL', d.bl, true);
+  if (isAir) {
+    html += item('AWB', d.awb, true);
+    html += item(t('lblAirline'), d.vessel, false);
+    html += item(t('lblFlight'), d.voyage, true);
+  } else {
+    html += item(t('colContainer'), d.container, true);
+    html += item('BL', d.bl, true);
+    html += item(t('colLine'), d.line, false);
+    html += item(t('lblVessel'), d.vessel + (d.vesselImo ? ' · IMO ' + d.vesselImo : ''), false);
+    html += item(t('lblVoyage'), d.voyage, true);
+  }
   html += item(t('colProc'), d.processo, false);
-  html += item(t('colLine'), d.line, false);
   html += item(t('colRoute'), (d.pol && d.pod) ? d.pol + ' → ' + d.pod : (d.pol || d.pod), false);
-  html += item(t('lblVessel'), d.vessel + (d.vesselImo ? ' · IMO ' + d.vesselImo : ''), false);
-  html += item(t('lblVoyage'), d.voyage, true);
   html += item('ETD', fmtD(d.etd), true);
   html += item(d.ata ? 'ATA' : 'ETA', fmtD(d.ata || d.eta), true);
   if (c && c.FormatedTransitTime) html += item(t('transitTime'), c.FormatedTransitTime, false);
@@ -875,7 +1008,7 @@ function renderDetail(d) {
   }
 
   if (c) {
-    const ev = buildTimeline(c);
+    const ev = isAir ? buildAirTimeline(c) : buildTimeline(c);
     if (ev.length) {
       html += '<div class="det-section-title">' + esc(t('detTimeline')) + '</div><div class="timeline">';
       ev.forEach(e => {
@@ -885,7 +1018,7 @@ function renderDetail(d) {
       });
       html += '</div>';
     }
-    if (c.VesselLatitude && c.VesselLongitude) {
+    if (!isAir && c.VesselLatitude && c.VesselLongitude) {
       html += '<div class="det-section-title">Lat/Lng</div><div class="form-hint mono" style="margin-bottom:10px">' +
         esc(c.VesselLatitude) + ', ' + esc(c.VesselLongitude) + '</div>';
     }
@@ -893,7 +1026,7 @@ function renderDetail(d) {
     html += '<div class="empty-state">' + esc(t('detNoRaw')) + '</div>';
   }
 
-  if (d.reqid) {
+  if (!isAir && d.reqid) {
     const mapUrl = 'https://shipsgo.com/marine-traffic?requestId=' + encodeURIComponent(d.reqid) +
                    '&containers=' + encodeURIComponent(d.container || '');
     html += '<div class="det-section-title">' + esc(t('detMap')) + '</div>' +
@@ -909,12 +1042,13 @@ function renderDetail(d) {
 // EXPORT XLSX
 // ============================================================
 async function exportXlsx() {
-  if (!rows.length) return;
+  const vis = visibleRows();
+  if (!vis.length) return;
   const wb = new ExcelJS.Workbook();
   const ws = wb.addWorksheet('TrackCargo');
-  ws.addRow(['Contentor','BL','Processo','Armador','POL','POD','Navio','Viagem','ETD','ETA','ATA','Estado','Últ. sync']);
+  ws.addRow(['Tipo','Contentor','AWB','BL','Processo','Armador/Companhia','Origem','Destino','Navio/Airline','Viagem/Voo','ETD','ETA','ATA','Estado','Últ. sync']);
   ws.getRow(1).font = { bold:true };
-  rows.forEach(s => ws.addRow([s.container, s.bl, s.processo, s.line, s.pol, s.pod, s.vessel, s.voyage, fmtD(s.etd), fmtD(s.eta), fmtD(s.ata), s.status, s.lastSync]));
+  vis.forEach(s => ws.addRow([s.mode || 'SEA', s.container, s.awb, s.bl, s.processo, s.line, s.pol, s.pod, s.vessel, s.voyage, fmtD(s.etd), fmtD(s.eta), fmtD(s.ata), s.status, s.lastSync]));
   ws.columns.forEach(col => { col.width = 16; });
   const buf = await wb.xlsx.writeBuffer();
   saveAs(new Blob([buf]), 'trackcargo_' + new Date().toISOString().substring(0,10) + '.xlsx');
