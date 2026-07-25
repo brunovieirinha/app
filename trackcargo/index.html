@@ -53,6 +53,11 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
   padding:38px 34px; width:340px; text-align:center;
 }
 .login-card img { max-height:52px; margin:0 auto 14px; }
+.brand-word { font-weight:700; letter-spacing:2.5px; font-size:20px; color:var(--blue); }
+.brand-word span { font-weight:300; color:var(--blue-mid); }
+.login-card .brand-word { margin-bottom:10px; }
+.sidebar .brand-word { font-size:15px; color:#fff; letter-spacing:2px; }
+.sidebar .brand-word span { color:#7FA8DC; }
 .login-card h2 { color:var(--blue); margin-bottom:4px; font-weight:700; }
 .login-card .sub { color:var(--text-muted); font-size:12px; margin-bottom:22px; }
 .login-card input {
@@ -259,8 +264,9 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
 <div id="loginScreen">
   <div class="login-card">
     <img id="loginLogo" src="" alt="Logo" style="display:none">
+    <div class="brand-word" id="loginWordmark">PORTO<span>CARGO</span></div>
     <h2>TrackCargo</h2>
-    <div class="sub">PORTOCARGO · Tracking de Contentores</div>
+    <div class="sub">Tracking de Contentores e Carga Aérea</div>
     <input type="text" id="username" placeholder="Utilizador" autocomplete="username">
     <input type="password" id="password" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
     <button onclick="doLogin()" data-i18n="btnLogin">Entrar</button>
@@ -273,6 +279,7 @@ body { font-family:'DM Sans',sans-serif; background:var(--bg); color:var(--text)
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
       <img id="appLogo" src="" alt="Logo" style="display:none">
+      <div class="brand-word" id="appWordmark">PORTO<span>CARGO</span></div>
       <span class="sidebar-title">TrackCargo</span>
     </div>
     <nav>
@@ -594,6 +601,11 @@ async function loadBranding() {
       ['loginLogo','appLogo'].forEach(id => {
         const el = document.getElementById(id);
         if (el) { el.src = d.logoUrl; el.style.display = 'block'; }
+      });
+      // com logo oficial presente, esconder o wordmark tipográfico
+      ['loginWordmark','appWordmark'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.style.display = 'none';
       });
     }
   } catch (e) {}
