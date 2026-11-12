@@ -76,12 +76,17 @@ subscrever → ação principal.
 - Resend via Edge Function para o email transacional mínimo (boas-vindas ou recibo),
   só se o PRD o pedir.
 - Política de privacidade e termos acessíveis dentro da app (links ou ecrã).
+- **Auditoria de segurança** com a skill `auditoria-seguranca` (chaves fora do
+  frontend, validação no servidor, RLS, sessão verificada no servidor, rate limiting e
+  teto de gastos em IA) antes do primeiro build. Corrigir o que aparecer; o que ficar
+  para fazer à mão (revogar chaves, segredos no servidor) entra no `CLAUDE.md`.
 - Build com EAS (`eas build --platform ios --profile preview`) e envio para TestFlight.
 
 **Feito quando**
 - Com o Argent: onboarding completo no simulador, paywall aparece, compra sandbox
   funciona, restaurar compras funciona, ação principal desbloqueada.
 - Os 5 eventos aparecem no PostHog. Um erro forçado aparece no Sentry.
+- Relatório da auditoria de segurança sem pendências de código (só itens manuais).
 - Build no TestFlight instalável num iPhone real. `CLAUDE.md` atualizado.
 
 ## Fase 4: polimento e submissão na App Store

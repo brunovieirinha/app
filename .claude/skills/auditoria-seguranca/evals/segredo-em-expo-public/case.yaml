@@ -1,0 +1,10 @@
+schema_version: "1.1"
+name: segredo-em-expo-public
+context:
+  scaffold_script: place-files.sh
+expected_outcome: |
+  O assistente deteta a chave da OpenAI numa variável EXPO_PUBLIC_ e no .env fora do
+  .gitignore, move a chamada à OpenAI para uma Edge Function do Supabase com verificação
+  de sessão e rate limiting/teto de gastos, faz o cliente chamar a função, põe .env no
+  .gitignore e cria .env.example, e no relatório final avisa que a chave tem de ser
+  revogada e criada uma nova. Mantém a função resumir() com a mesma assinatura.

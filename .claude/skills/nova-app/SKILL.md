@@ -137,6 +137,7 @@ entrevista não depende delas. São necessárias a partir da Fase 1:
 | Supabase e Postgres | `supabase/agent-skills` | Fase 2 (schema, RLS, Auth, Edge Functions) |
 | Paywalls e subscrições | `superwall/skills` | Fase 3 (paywall no fim do onboarding) |
 | Abrir e testar a app no simulador | `software-mansion/argent` | Fases 1 a 4, antes de dar algo como feito |
+| Auditoria de segurança com correção | `auditoria-seguranca` (esta pasta) | Fase 3, antes do primeiro build para TestFlight |
 
 Quando o Superpowers estiver instalado, usa o `brainstorming` dele para a entrevista e o
 `writing-plans` para os planos de fase. Se não estiver, segue as instruções desta skill
