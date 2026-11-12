@@ -1,0 +1,7 @@
+schema_version: "1.1"
+name: entrevista-ideia-nova
+expected_outcome: |
+  O assistente não escreve código nem cria ficheiros de projeto. Responde em português
+  europeu com UMA única pergunta sobre o público, o problema, a ação do primeiro dia ou
+  o modelo de negócio, e termina a vez à espera da resposta. Não apresenta várias
+  perguntas numa lista.

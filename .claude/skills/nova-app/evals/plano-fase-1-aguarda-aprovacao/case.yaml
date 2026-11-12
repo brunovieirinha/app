@@ -1,0 +1,8 @@
+schema_version: "1.1"
+name: plano-fase-1-aguarda-aprovacao
+context:
+  scaffold_script: place-files.sh
+expected_outcome: |
+  O assistente lê o PRD, apresenta um plano curto da Fase 1 (ação principal no
+  simulador com dados locais, design system, ficheiros principais, forma de verificar)
+  e termina a vez a pedir aprovação, sem criar o projeto Expo nem instalar pacotes.
