@@ -53,7 +53,9 @@ hoje. Por isso:
    - **Primeiro dia**: qual é a única ação que a app tem de fazer bem no primeiro dia?
      Se só pudesse existir um ecrã, qual era?
    - **Dinheiro**: porque é que alguém pagaria? Quanto? Subscrição mensal/anual ou compra
-     única? O que fica grátis e o que fica atrás do paywall?
+     única? O que fica grátis e o que fica atrás do paywall? Quando o utilizador não
+     souber, propõe com base em `references/monetizacao.md` (preços de partida, paywall
+     rígido com trial de 7 dias, anual em destaque) e diz porquê.
 3. **Propõe quando o utilizador não souber.** Se responder "não sei", oferece 2 ou 3
    opções concretas com uma recomendação. Não deixes a pergunta em aberto.
 4. **Pára quando tiveres o suficiente**, não quando tiveres tudo. O objetivo é um PRD
@@ -159,5 +161,8 @@ diretamente, que cobrem o mesmo.
 - `references/fases.md`: âmbito, checklist e critério de "feito" de cada uma das 4 fases.
 - `references/stack-e-regras.md`: stack detalhada, regras da Apple, regras não negociáveis.
 - `references/ferramentas.md`: como verificar e instalar as skills externas e o Argent.
+- `references/monetizacao.md`: playbook para apps pessoais que dão um extra: escolher a
+  ideia, validar sem código, preços e paywall com dados de 2026, métricas, ASO, custos
+  e a regra dos 90 dias. Ler na Fase 0 (dinheiro e PRD) e na Fase 3 (onboarding e paywall).
 - `assets/PRD-template.md`: template do `docs/PRD.md`.
 - `assets/CLAUDE-template.md`: template do `CLAUDE.md` do projeto.

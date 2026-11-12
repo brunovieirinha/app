@@ -64,7 +64,8 @@ subscrever → ação principal.
 
 **Âmbito**
 - Onboarding curto (2 a 4 ecrãs) que explica o valor e pede as permissões necessárias
-  com justificação clara. Nada de pedir permissões que a app não usa.
+  com justificação clara. Nada de pedir permissões que a app não usa. Estrutura e
+  paywall conforme a secção 5 de `monetizacao.md`.
 - Superwall configurado sobre StoreKit, com os produtos criados no App Store Connect
   (o utilizador cria os produtos; a skill prepara os IDs e a configuração). Paywall
   aparece no fim do onboarding. Botão de restaurar compras visível.
